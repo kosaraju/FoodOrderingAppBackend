@@ -25,14 +25,7 @@ public class CustomerService {
    * @throws SignUpRestrictedException SignUpRestrictedException
    */
   @Transactional(propagation = Propagation.REQUIRED)
-  public CustomerEntity signup(CustomerEntity customerEntity) throws SignUpRestrictedException {
-
-    //If customer already exists with same contact number throw respective exceptions
-    CustomerEntity existingUser1 = customerDAO.getCustomerByContactNumber(customerEntity.getContactnumber());
-    if (existingUser1 != null) {
-      throw new SignUpRestrictedException("SGR-001",
-              "This contact number is already registered! Try other contact number.");
-    }
+  public CustomerEntity saveCustomer(CustomerEntity customerEntity) throws SignUpRestrictedException {
 
     //Perform null check for mandatory fields
     if (customerEntity == null || customerEntity.getFirstName() == null || customerEntity.getContactnumber()==null
@@ -43,6 +36,13 @@ public class CustomerService {
         || customerEntity.getContactnumber().isEmpty()
     ) {
       throw new SignUpRestrictedException("SGR-005", "Except last name all fields should be filled");
+    }
+
+    //If customer already exists with same contact number throw respective exceptions
+    CustomerEntity existingUser1 = customerDAO.getCustomerByContactNumber(customerEntity.getContactnumber());
+    if (existingUser1 != null) {
+      throw new SignUpRestrictedException("SGR-001",
+          "This contact number is already registered! Try other contact number.");
     }
 
     //(SGR-002) and message (Invalid email-id format!).
@@ -63,25 +63,21 @@ public class CustomerService {
     String[] encryptedText = passwordCryptographyProvider.encrypt(customerEntity.getPassword());
     customerEntity.setSalt(encryptedText[0]);
     customerEntity.setPassword(encryptedText[1]);
-
     return customerDAO.createCustomer(customerEntity);
   }
-  //TODO fix valid email  determining logic
+  //valid email  determining logic
   private boolean isValidEmail(String email) {
-    String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
-            "[a-zA-Z0-9_+&*-]+)*@" +
-            "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
-            "A-Z]{2,7}$";
+    String emailRegex = "^[A-Z0-9]+@[A-Z0-9]+\\.[A-Z0-9]{2,7}$";
 
-    Pattern pat = Pattern.compile(emailRegex);
+    Pattern pat = Pattern.compile(emailRegex, Pattern.CASE_INSENSITIVE);
     if (email == null)
       return false;
     return pat.matcher(email).matches();
   }
 
-  //TODO fix valid contact number determining logic
+  // valid contact number determining logic
   private boolean isValidContactNumber(String contactNumber) {
-    String contactNUmberRegex = "^[0-9](10)";
+    String contactNUmberRegex = "\\d{10}";
 
     Pattern pat = Pattern.compile(contactNUmberRegex);
     if (contactNumber == null)
@@ -89,12 +85,10 @@ public class CustomerService {
     return pat.matcher(contactNumber).matches();
   }
 
-  //TODO fix weak password determining logic
+  //Strong password determining logic
   private boolean isWeakPassword(String password) {
-    String passwordRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
-            "[a-zA-Z0-9_+&*-]+)*@" +
-            "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
-            "A-Z]{2,7}$";
+
+    String passwordRegex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[#@$%&*!^]).{8,}$";
 
     Pattern pat = Pattern.compile(passwordRegex);
     if (password == null)

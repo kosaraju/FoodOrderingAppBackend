@@ -26,7 +26,7 @@ public class RestExceptionHandler {
   public ResponseEntity<ErrorResponse> signupRestrictionException(SignUpRestrictedException exc,
       WebRequest request) {
     return new ResponseEntity<ErrorResponse>(
-        new ErrorResponse().code(exc.getCode()).message(exc.getErrorMessage()), HttpStatus.CONFLICT
+        new ErrorResponse().code(exc.getCode()).message(exc.getErrorMessage()), HttpStatus.BAD_REQUEST
     );
   }
 

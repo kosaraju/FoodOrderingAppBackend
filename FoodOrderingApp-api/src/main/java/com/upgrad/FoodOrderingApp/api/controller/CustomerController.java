@@ -42,6 +42,7 @@ public class CustomerController {
       throws SignUpRestrictedException {
 
     //Fetch details from signupCustomerRequest and set in CustomerEntity instance
+    if(signupCustomerRequest==null) throw new SignUpRestrictedException("SGR-005", "Except last name all fields should be filled");
     final CustomerEntity customerEntity = new CustomerEntity();
     customerEntity.setUuid(UUID.randomUUID().toString());
     customerEntity.setFirstName(signupCustomerRequest.getFirstName());
@@ -52,7 +53,7 @@ public class CustomerController {
     customerEntity.setSalt("1234abc"); // will get overwritten in service class
 
     //Invoke business Service to signup & return SignupCustomerResponse
-    final CustomerEntity createdCustomerEntity = customerService.signup(customerEntity);
+    final CustomerEntity createdCustomerEntity = customerService.saveCustomer(customerEntity);
     SignupCustomerResponse customerResponse = new SignupCustomerResponse().id(createdCustomerEntity.getUuid())
         .status("CUSTOMER SUCCESSFULLY REGISTERED");
     return new ResponseEntity<SignupCustomerResponse>(customerResponse, HttpStatus.CREATED);

@@ -18,22 +18,22 @@ public class CustomerDAO {
     private EntityManager entityManager;
 
     /**create a CustomerEntity.
-     * @param CustomerEntity CustomerEntity
+     * @param customerEntity CustomerEntity
      * @return CustomerEntity
      */
-    public CustomerEntity createCustomer(CustomerEntity CustomerEntity) {
-        entityManager.persist(CustomerEntity);
-        return CustomerEntity;
+    public CustomerEntity createCustomer(CustomerEntity customerEntity) {
+        entityManager.persist(customerEntity);
+        return customerEntity;
     }
 
     /**Delete aCustomer.
-     * @param CustomerEntity CustomerEntity
+     * @param customerEntity CustomerEntity
      * @return CustomerEntity
      */
     @OnDelete(action = OnDeleteAction.CASCADE)
-    public CustomerEntity deleteCustomer(CustomerEntity CustomerEntity) {
-        entityManager.remove(CustomerEntity);
-        return CustomerEntity;
+    public CustomerEntity deleteCustomer(CustomerEntity customerEntity) {
+        entityManager.remove(customerEntity);
+        return customerEntity;
     }
 
     /**Get CustomerEntity by email.

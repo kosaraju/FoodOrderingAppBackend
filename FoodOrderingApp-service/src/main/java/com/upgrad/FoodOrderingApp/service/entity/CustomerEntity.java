@@ -29,6 +29,7 @@ public class CustomerEntity implements Serializable {
 
     @Column(name = "uuid")
     @Size(max = 200)
+    @NotNull
     private String uuid;
 
     @Column(name = "firstname")
@@ -37,7 +38,6 @@ public class CustomerEntity implements Serializable {
     private String firstName;
 
     @Column(name = "lastname")
-    @NotNull
     @Size(max = 30)
     private String lastName;
 
@@ -56,7 +56,8 @@ public class CustomerEntity implements Serializable {
     private String salt;
 
     @Column(name = "contact_number")
-    @Size(max = 50)
+    @Size(max = 30)
+    @NotNull
     private String contactnumber;
 
     public long getId() {
