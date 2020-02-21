@@ -1,13 +1,14 @@
 package com.upgrad.FoodOrderingApp.api.controller;
 
 import com.upgrad.FoodOrderingApp.api.model.LoginResponse;
+import com.upgrad.FoodOrderingApp.api.model.LogoutResponse;
 import com.upgrad.FoodOrderingApp.api.model.SignupCustomerRequest;
 import com.upgrad.FoodOrderingApp.api.model.SignupCustomerResponse;
-import com.upgrad.FoodOrderingApp.service.businness.AuthenticationService;
 import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AuthenticationFailedException;
+import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.SignUpRestrictedException;
 import java.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,4 +120,33 @@ public class CustomerController {
     return new ResponseEntity<LoginResponse>(loginResponse, headers, HttpStatus.OK);
   }
 
+
+  /**
+   * Handler to logout.
+   *
+   * @param authorization access token
+   * @return LogoutResponse
+   * @throws AuthenticationFailedException AuthenticationFailedException
+   */
+  @RequestMapping(method = RequestMethod.POST, path = "/customer/logout",
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public ResponseEntity<LogoutResponse> logout(
+      @RequestHeader("authorization") final String authorization)
+      throws AuthenticationFailedException, AuthorizationFailedException {
+
+    //Get access token from authorization header
+    String jwtToken = customerService.getBearerAccessToken(authorization);
+
+    //Invoke business service to logoff
+    CustomerAuthEntity userAuthEntity = customerService.logout(jwtToken);
+    //Get Customer details who had logged off
+    CustomerEntity customer = userAuthEntity.getCustomer();
+
+    //Fill in Signout Response and return
+    LogoutResponse logoutResponse = new LogoutResponse().id(customer.getUuid())
+        .message("LOGGED OUT SUCCESSFULLY");
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("access-token", userAuthEntity.getAccessToken());
+    return new ResponseEntity<LogoutResponse>(logoutResponse, headers, HttpStatus.OK);
+  }
 }
