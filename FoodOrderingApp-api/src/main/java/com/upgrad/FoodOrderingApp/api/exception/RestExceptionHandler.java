@@ -4,7 +4,6 @@ import com.upgrad.FoodOrderingApp.api.model.ErrorResponse;
 import com.upgrad.FoodOrderingApp.service.exception.AuthenticationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.CustomerNotFoundException;
-import com.upgrad.FoodOrderingApp.service.exception.SignOutRestrictedException;
 import com.upgrad.FoodOrderingApp.service.exception.SignUpRestrictedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,23 +44,6 @@ public class RestExceptionHandler {
         HttpStatus.UNAUTHORIZED
     );
   }
-
-  /**
-   * SignOutRestrictedException handler.
-   *
-   * @param exc     SignOutRestrictedException
-   * @param request WebRequest
-   * @return ErrorResponse
-   */
-  @ExceptionHandler(SignOutRestrictedException.class)
-  public ResponseEntity<ErrorResponse> signoutRestrictedException(SignOutRestrictedException exc,
-      WebRequest request) {
-    return new ResponseEntity<ErrorResponse>(
-        new ErrorResponse().code(exc.getCode()).message(exc.getErrorMessage()),
-        HttpStatus.UNAUTHORIZED
-    );
-  }
-
 
   /**
    * CustomerNotFoundException handler.

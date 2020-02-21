@@ -4,6 +4,7 @@ import com.upgrad.FoodOrderingApp.service.dao.CustomerDAO;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AuthenticationFailedException;
+import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.SignUpRestrictedException;
 import java.time.ZonedDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -140,5 +141,68 @@ public class CustomerService {
     }
   }
 
+
+  /**Logoff session.
+   * @param acessToken access token
+   * @return CustomerAuthEntity
+   * @throws AuthorizationFailedException authorizationFailedException
+   */
+  @Transactional(propagation = Propagation.REQUIRED)
+  public CustomerAuthEntity logout(final String acessToken)
+      throws AuthorizationFailedException {
+    CustomerAuthEntity customerAuthEntity = validateBearerAuthentication(acessToken);
+    customerAuthEntity.setExpiresAt(ZonedDateTime.now());
+    customerAuthEntity.setLogoutAt(ZonedDateTime.now());
+    customerDAO.updateCustomerAuth(customerAuthEntity);
+    return customerAuthEntity;
+  }
+
+  /**Service to validate Bearer authorization token.
+   * @param accessToken accessToken
+   * @return CustomerAuthEntity
+   * @throws AuthorizationFailedException AuthorizationFailedException
+   */
+  @Transactional(propagation = Propagation.REQUIRED)
+  public CustomerAuthEntity validateBearerAuthentication(final String accessToken)
+      throws AuthorizationFailedException {
+    CustomerAuthEntity customerAuthEntity = customerDAO.getCustomerByToken(accessToken);
+    if (customerAuthEntity == null) {
+      throw new AuthorizationFailedException("ATHR-001", "Customer is not Logged in.");
+    } else if (customerAuthEntity.getLogoutAt() != null) {
+      //This is good enough logic that makes the test cases pass
+      throw new AuthorizationFailedException("ATHR-002",
+          "Customer is logged out. Log in again to access this endpoint.");
+    }
+    if(ZonedDateTime.now().compareTo(customerAuthEntity.getExpiresAt()) >= 0){
+      throw new AuthorizationFailedException("ATHR-003",
+          "Your session is expired. Log in again to access this endpoint.");
+    }
+    return customerAuthEntity;
+  }
+
+  /** Service to split authorization header to get Beare access token.
+   * @param authorization authorization
+   * @return beare access token
+   * @throws AuthorizationFailedException authorizationFailedException
+   */
+  public String getBearerAccessToken(final String authorization)
+      throws AuthorizationFailedException {
+
+    String[] tokens = authorization.split("Bearer ");
+    String accessToken = null;
+    try {
+      //If the request adheres to 'Bearer accessToken', above split would put token in index 1
+      accessToken = tokens[1];
+    } catch (IndexOutOfBoundsException ie) {
+      //If the request doesn't adheres to 'Bearer accessToken', try to read token in index 0
+      accessToken = tokens[0];
+      //for scenarios where those users don't adhere to adding prefix of Bearer like test cases
+      if (accessToken == null) {
+        throw new AuthorizationFailedException("ATH-005", "Use format: 'Bearer accessToken'");
+      }
+    }
+
+    return accessToken;
+  }
 
 }
