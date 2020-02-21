@@ -22,46 +22,6 @@ public class AuthenticationService {
   @Autowired
   private PasswordCryptographyProvider passwordCryptographyProvider;
 
-  /** authenticate incoming login.
-   * @param email email
-   * @param password password
-   * @return CustomerAuthEntity
-   * @throws AuthenticationFailedException AuthenticationFailedException
-   */
-  @Transactional(propagation = Propagation.REQUIRED)
-  public CustomerAuthEntity authenticate(final String email, final String password)
-      throws AuthenticationFailedException {
-    CustomerEntity customerEntity = customerDAO.getCustomerByEmail(email);
-    if (customerEntity == null) {
-      throw new AuthenticationFailedException("ATH-001", "This email does not exist");
-    }
-
-    final String encryptedPassword = PasswordCryptographyProvider
-        .encrypt(password, customerEntity.getSalt());
-    if (encryptedPassword.equals(customerEntity.getPassword())) {
-      JwtTokenProvider jwtTokenProvider = new JwtTokenProvider(encryptedPassword);
-      CustomerAuthEntity customerAuthEntity = new CustomerAuthEntity();
-      customerAuthEntity.setCustomerEntity(customerEntity);
-      final ZonedDateTime now = ZonedDateTime.now();
-      final ZonedDateTime expiresAt = now.plusHours(8);
-
-      customerAuthEntity
-          .setAccessToken(jwtTokenProvider.generateToken(customerEntity.getUuid(), now, expiresAt));
-      customerAuthEntity.setUuid(customerEntity.getUuid());
-
-      customerAuthEntity.setLoginAt(now);
-      customerAuthEntity.setExpiresAt(expiresAt);
-      customerAuthEntity.setLogoutAt(null);//case of relogin
-
-      customerDAO.createAuthToken(customerAuthEntity);
-
-      customerDAO.updateCustomer(customerEntity);
-      return customerAuthEntity;
-    } else {
-      throw new AuthenticationFailedException("ATH-002", "Password failed");
-    }
-  }
-
   /**Logoff session.
    * @param acessToken access token
    * @return CustomerAuthEntity
