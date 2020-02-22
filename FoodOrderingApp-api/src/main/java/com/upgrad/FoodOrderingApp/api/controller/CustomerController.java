@@ -4,12 +4,15 @@ import com.upgrad.FoodOrderingApp.api.model.LoginResponse;
 import com.upgrad.FoodOrderingApp.api.model.LogoutResponse;
 import com.upgrad.FoodOrderingApp.api.model.SignupCustomerRequest;
 import com.upgrad.FoodOrderingApp.api.model.SignupCustomerResponse;
+import com.upgrad.FoodOrderingApp.api.model.UpdateCustomerRequest;
+import com.upgrad.FoodOrderingApp.api.model.UpdateCustomerResponse;
 import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AuthenticationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.SignUpRestrictedException;
+import com.upgrad.FoodOrderingApp.service.exception.UpdateCustomerException;
 import java.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -132,7 +135,7 @@ public class CustomerController {
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<LogoutResponse> logout(
       @RequestHeader("authorization") final String authorization)
-      throws AuthenticationFailedException, AuthorizationFailedException {
+      throws AuthorizationFailedException {
 
     //Get access token from authorization header
     String jwtToken = customerService.getBearerAccessToken(authorization);
@@ -149,4 +152,40 @@ public class CustomerController {
     headers.add("access-token", userAuthEntity.getAccessToken());
     return new ResponseEntity<LogoutResponse>(logoutResponse, headers, HttpStatus.OK);
   }
+
+  /**
+   * Handler to Update customer.
+   *
+   * @param authorization access token
+   * @return
+   * @throws
+   */
+  @RequestMapping(method = RequestMethod.PUT, path = "/customer",
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public ResponseEntity<UpdateCustomerResponse> update(
+      @RequestHeader("authorization") final String authorization, UpdateCustomerRequest updateCustomerRequest)
+      throws AuthorizationFailedException, UpdateCustomerException {
+
+    //Get access token from authorization header
+    String jwtToken = customerService.getBearerAccessToken(authorization);
+
+    if(updateCustomerRequest.getFirstName()==null || updateCustomerRequest.getFirstName().trim().isEmpty()){
+        throw new UpdateCustomerException("UCR-002","First name field should not be empty");
+    }
+
+    //Invoke business service to update
+    CustomerEntity customer = customerService.getCustomer(jwtToken);
+    customer.setFirstName(updateCustomerRequest.getFirstName());
+    customer.setLastName(updateCustomerRequest.getLastName());
+    customerService.updateCustomer(customer);
+
+    //Fill in Signout Response and return
+    UpdateCustomerResponse updateCustomerResponse = new UpdateCustomerResponse()
+        .id(customer.getUuid()).firstName(customer.getFirstName())
+        .lastName(customer.getLastName()).status("CUSTOMER DETAILS UPDATED SUCCESSFULLY");
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("access-token", jwtToken);
+    return new ResponseEntity<UpdateCustomerResponse>(updateCustomerResponse, headers, HttpStatus.OK);
+  }
 }
+
