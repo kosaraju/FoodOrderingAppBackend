@@ -6,7 +6,9 @@ import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AuthenticationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.SignUpRestrictedException;
+import com.upgrad.FoodOrderingApp.service.exception.UpdateCustomerException;
 import java.time.ZonedDateTime;
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -126,7 +128,7 @@ public class CustomerService {
 
       customerAuthEntity
           .setAccessToken(jwtTokenProvider.generateToken(customerEntity.getUuid(), now, expiresAt));
-      customerAuthEntity.setUuid(customerEntity.getUuid());
+      customerAuthEntity.setUuid(UUID.randomUUID().toString());
 
       customerAuthEntity.setLoginAt(now);
       customerAuthEntity.setExpiresAt(expiresAt);
@@ -230,5 +232,38 @@ public class CustomerService {
     return customer;
   }
 
+
+  /**Change Password.
+   * @param
+   * @return
+   * @throws
+   */
+  @Transactional(propagation = Propagation.REQUIRED)
+  public CustomerEntity updateCustomerPassword(
+      final String oldPassword, final String newPassword, CustomerEntity customer)
+      throws UpdateCustomerException {
+
+    if(!isWeakPassword(newPassword)){
+      throw new UpdateCustomerException("UCR-001", "Weak password!");
+    }
+
+    final String encryptedOldPassword = PasswordCryptographyProvider
+        .encrypt(oldPassword, customer.getSalt());
+
+    if(!encryptedOldPassword.equals(customer.getPassword())) {
+      throw new UpdateCustomerException("UCR-004", "Incorrect old password!");
+    }
+    final String encryptedNewPassword = PasswordCryptographyProvider
+        .encrypt(newPassword, customer.getSalt());
+
+    if(encryptedOldPassword.equals(encryptedNewPassword)){
+      throw new UpdateCustomerException("UCR-900", "New password cannot be the same!");
+    }
+
+    customer.setPassword(encryptedNewPassword);
+    customerDAO.updateCustomer(customer);
+
+    return customer;
+  }
 
 }

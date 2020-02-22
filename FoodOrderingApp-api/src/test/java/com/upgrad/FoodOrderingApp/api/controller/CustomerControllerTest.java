@@ -362,7 +362,7 @@ public class CustomerControllerTest {
         verify(mockCustomerService, times(1)).getCustomer("auth");
         verify(mockCustomerService, times(0)).updateCustomer(any());
     }
-/*
+
     // ----------------------------- PUT /customer/password --------------------------------
 
     //This test case passes when you are able to update your password successfully.
@@ -486,6 +486,5 @@ public class CustomerControllerTest {
         verify(mockCustomerService, times(1)).getCustomer("auth");
         verify(mockCustomerService, times(1)).updateCustomerPassword("oldPwd", "newPwd", customerEntity);
     }
-*/
 
 }
