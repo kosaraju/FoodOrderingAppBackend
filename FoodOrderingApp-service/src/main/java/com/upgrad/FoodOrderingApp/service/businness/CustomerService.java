@@ -205,4 +205,30 @@ public class CustomerService {
     return accessToken;
   }
 
+  /**Update Customer.
+   * @param
+   * @return
+   * @throws
+   */
+  @Transactional(propagation = Propagation.REQUIRED)
+  public CustomerEntity updateCustomer(CustomerEntity customer) {
+    customerDAO.updateCustomer(customer);
+    return customer;
+  }
+
+
+  /**Get Customer.
+   * @param
+   * @return
+   * @throws
+   */
+  @Transactional(propagation = Propagation.REQUIRED)
+  public CustomerEntity getCustomer(final String acessToken)
+      throws AuthorizationFailedException {
+    CustomerAuthEntity customerAuthEntity = validateBearerAuthentication(acessToken);
+    CustomerEntity customer = customerAuthEntity.getCustomer();
+    return customer;
+  }
+
+
 }
