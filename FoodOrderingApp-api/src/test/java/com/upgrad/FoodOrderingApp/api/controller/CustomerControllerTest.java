@@ -199,7 +199,7 @@ public class CustomerControllerTest {
         verify(mockCustomerService, times(1)).authenticate("9090909090", "IncorrectPassword");
     }
 
-/*
+
     // ----------------------------- POST /customer/logout --------------------------------
 
     //This test case passes when you are able to logout successfully.
@@ -486,6 +486,5 @@ public class CustomerControllerTest {
         verify(mockCustomerService, times(1)).getCustomer("auth");
         verify(mockCustomerService, times(1)).updateCustomerPassword("oldPwd", "newPwd", customerEntity);
     }
-*/
 
 }
