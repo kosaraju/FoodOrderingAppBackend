@@ -1,12 +1,14 @@
 package com.upgrad.FoodOrderingApp.service.businness;
 
-import com.upgrad.FoodOrderingApp.service.dao.CustomerDAO;
+import com.upgrad.FoodOrderingApp.service.dao.CustomerDao;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AuthenticationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.SignUpRestrictedException;
+import com.upgrad.FoodOrderingApp.service.exception.UpdateCustomerException;
 import java.time.ZonedDateTime;
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -18,7 +20,7 @@ import java.util.regex.Pattern;
 public class CustomerService {
 
   @Autowired
-  private CustomerDAO customerDAO;
+  private CustomerDao customerDao;
 
   @Autowired
   private PasswordCryptographyProvider passwordCryptographyProvider;
@@ -43,7 +45,7 @@ public class CustomerService {
     }
 
     //If customer already exists with same contact number throw respective exceptions
-    CustomerEntity existingUser1 = customerDAO.getCustomerByContactNumber(customerEntity.getContactnumber());
+    CustomerEntity existingUser1 = customerDao.getCustomerByContactNumber(customerEntity.getContactnumber());
     if (existingUser1 != null) {
       throw new SignUpRestrictedException("SGR-001",
           "This contact number is already registered! Try other contact number.");
@@ -67,7 +69,7 @@ public class CustomerService {
     String[] encryptedText = passwordCryptographyProvider.encrypt(customerEntity.getPassword());
     customerEntity.setSalt(encryptedText[0]);
     customerEntity.setPassword(encryptedText[1]);
-    return customerDAO.createCustomer(customerEntity);
+    return customerDao.createCustomer(customerEntity);
   }
   //valid email  determining logic
   private boolean isValidEmail(String email) {
@@ -110,7 +112,7 @@ public class CustomerService {
   @Transactional(propagation = Propagation.REQUIRED)
   public CustomerAuthEntity authenticate(final String contactNumber, final String password)
       throws AuthenticationFailedException {
-    CustomerEntity customerEntity = customerDAO.getCustomerByContactNumber(contactNumber);
+    CustomerEntity customerEntity = customerDao.getCustomerByContactNumber(contactNumber);
     if (customerEntity == null) {
       throw new AuthenticationFailedException("ATH-001", "This contact number has not been registered!");
     }
@@ -126,15 +128,15 @@ public class CustomerService {
 
       customerAuthEntity
           .setAccessToken(jwtTokenProvider.generateToken(customerEntity.getUuid(), now, expiresAt));
-      customerAuthEntity.setUuid(customerEntity.getUuid());
+      customerAuthEntity.setUuid(UUID.randomUUID().toString());
 
       customerAuthEntity.setLoginAt(now);
       customerAuthEntity.setExpiresAt(expiresAt);
       customerAuthEntity.setLogoutAt(null);//case of relogin
 
-      customerDAO.createAuthToken(customerAuthEntity);
+      customerDao.createAuthToken(customerAuthEntity);
 
-      customerDAO.updateCustomer(customerEntity);
+      customerDao.updateCustomer(customerEntity);
       return customerAuthEntity;
     } else {
       throw new AuthenticationFailedException("ATH-002", "Invalid Credentials");
@@ -153,7 +155,7 @@ public class CustomerService {
     CustomerAuthEntity customerAuthEntity = validateBearerAuthentication(acessToken);
     customerAuthEntity.setExpiresAt(ZonedDateTime.now());
     customerAuthEntity.setLogoutAt(ZonedDateTime.now());
-    customerDAO.updateCustomerAuth(customerAuthEntity);
+    customerDao.updateCustomerAuth(customerAuthEntity);
     return customerAuthEntity;
   }
 
@@ -165,7 +167,7 @@ public class CustomerService {
   @Transactional(propagation = Propagation.REQUIRED)
   public CustomerAuthEntity validateBearerAuthentication(final String accessToken)
       throws AuthorizationFailedException {
-    CustomerAuthEntity customerAuthEntity = customerDAO.getCustomerByToken(accessToken);
+    CustomerAuthEntity customerAuthEntity = customerDao.getCustomerByToken(accessToken);
     if (customerAuthEntity == null) {
       throw new AuthorizationFailedException("ATHR-001", "Customer is not Logged in.");
     } else if (customerAuthEntity.getLogoutAt() != null) {
@@ -212,7 +214,7 @@ public class CustomerService {
    */
   @Transactional(propagation = Propagation.REQUIRED)
   public CustomerEntity updateCustomer(CustomerEntity customer) {
-    customerDAO.updateCustomer(customer);
+    customerDao.updateCustomer(customer);
     return customer;
   }
 
@@ -230,5 +232,38 @@ public class CustomerService {
     return customer;
   }
 
+
+  /**Change Password.
+   * @param
+   * @return
+   * @throws
+   */
+  @Transactional(propagation = Propagation.REQUIRED)
+  public CustomerEntity updateCustomerPassword(
+      final String oldPassword, final String newPassword, CustomerEntity customer)
+      throws UpdateCustomerException {
+
+    if(!isWeakPassword(newPassword)){
+      throw new UpdateCustomerException("UCR-001", "Weak password!");
+    }
+
+    final String encryptedOldPassword = PasswordCryptographyProvider
+        .encrypt(oldPassword, customer.getSalt());
+
+    if(!encryptedOldPassword.equals(customer.getPassword())) {
+      throw new UpdateCustomerException("UCR-004", "Incorrect old password!");
+    }
+    final String encryptedNewPassword = PasswordCryptographyProvider
+        .encrypt(newPassword, customer.getSalt());
+
+    if(encryptedOldPassword.equals(encryptedNewPassword)){
+      throw new UpdateCustomerException("UCR-900", "New password cannot be the same!");
+    }
+
+    customer.setPassword(encryptedNewPassword);
+    customerDao.updateCustomer(customer);
+
+    return customer;
+  }
 
 }

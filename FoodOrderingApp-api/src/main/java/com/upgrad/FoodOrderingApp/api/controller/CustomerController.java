@@ -6,6 +6,8 @@ import com.upgrad.FoodOrderingApp.api.model.SignupCustomerRequest;
 import com.upgrad.FoodOrderingApp.api.model.SignupCustomerResponse;
 import com.upgrad.FoodOrderingApp.api.model.UpdateCustomerRequest;
 import com.upgrad.FoodOrderingApp.api.model.UpdateCustomerResponse;
+import com.upgrad.FoodOrderingApp.api.model.UpdatePasswordRequest;
+import com.upgrad.FoodOrderingApp.api.model.UpdatePasswordResponse;
 import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
@@ -179,13 +181,52 @@ public class CustomerController {
     customer.setLastName(updateCustomerRequest.getLastName());
     customerService.updateCustomer(customer);
 
-    //Fill in Signout Response and return
+    //Fill in Update Customer Response and return
     UpdateCustomerResponse updateCustomerResponse = new UpdateCustomerResponse()
         .id(customer.getUuid()).firstName(customer.getFirstName())
         .lastName(customer.getLastName()).status("CUSTOMER DETAILS UPDATED SUCCESSFULLY");
     HttpHeaders headers = new HttpHeaders();
     headers.add("access-token", jwtToken);
     return new ResponseEntity<UpdateCustomerResponse>(updateCustomerResponse, headers, HttpStatus.OK);
+  }
+
+  /**
+   * Handler to Change customer password.
+   *
+   * @param authorization access token
+   * @return
+   * @throws
+   */
+  @RequestMapping(method = RequestMethod.PUT, path = "/customer/password",
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public ResponseEntity<UpdatePasswordResponse> changePassword(
+      @RequestHeader("authorization") final String authorization, UpdatePasswordRequest updatePasswordRequest)
+      throws AuthorizationFailedException, UpdateCustomerException {
+
+    //Get access token from authorization header
+    String jwtToken = customerService.getBearerAccessToken(authorization);
+
+    if(updatePasswordRequest.getNewPassword()==null
+        || updatePasswordRequest.getNewPassword().isEmpty()
+        || updatePasswordRequest.getOldPassword()==null
+        || updatePasswordRequest.getOldPassword().isEmpty()
+    ){
+      throw new UpdateCustomerException("UCR-003","No field should be empty");
+    }
+
+    String oldPassword = updatePasswordRequest.getOldPassword();
+    String newPassword = updatePasswordRequest.getNewPassword();
+    //Call business service
+    CustomerAuthEntity customerAuthEntity = customerService.validateBearerAuthentication(jwtToken);
+    CustomerEntity customer = customerAuthEntity.getCustomer();
+    customer = customerService.updateCustomerPassword(oldPassword, newPassword, customer);
+
+    //Fill in Update Customer Response and return
+    UpdatePasswordResponse updatePasswordResponse = new UpdatePasswordResponse()
+        .id(customer.getUuid()).status("CUSTOMER PASSWORD UPDATED SUCCESSFULLY");
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("access-token", jwtToken);
+    return new ResponseEntity<UpdatePasswordResponse>(updatePasswordResponse, headers, HttpStatus.OK);
   }
 }
 
