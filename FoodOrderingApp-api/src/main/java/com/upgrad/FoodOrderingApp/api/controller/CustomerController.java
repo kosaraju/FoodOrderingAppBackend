@@ -15,13 +15,17 @@ import com.upgrad.FoodOrderingApp.service.exception.AuthenticationFailedExceptio
 import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.SignUpRestrictedException;
 import com.upgrad.FoodOrderingApp.service.exception.UpdateCustomerException;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
+import javax.print.attribute.standard.Media;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -47,7 +51,7 @@ public class CustomerController {
   @RequestMapping(method = RequestMethod.POST, path = "/customer/signup",
       consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public ResponseEntity<SignupCustomerResponse> customerSignup(final SignupCustomerRequest signupCustomerRequest)
+  public ResponseEntity<SignupCustomerResponse> customerSignup(@RequestBody final SignupCustomerRequest signupCustomerRequest)
       throws SignUpRestrictedException {
 
     //Fetch details from signupCustomerRequest and set in CustomerEntity instance
@@ -77,7 +81,7 @@ public class CustomerController {
    * @throws AuthenticationFailedException AuthenticationFailedException
    */
   @RequestMapping(method = RequestMethod.POST, path = "/customer/login",
-      produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<LoginResponse> login(
       @RequestHeader("authorization") final String authorization)
       throws AuthenticationFailedException {
@@ -122,6 +126,9 @@ public class CustomerController {
         .message("LOGGED IN SUCCESSFULLY");
     HttpHeaders headers = new HttpHeaders();
     headers.add("access-token", customerAuthEntity.getAccessToken());
+    List<String> header = new ArrayList<>();
+    header.add("access-token");
+    headers.setAccessControlExposeHeaders(header);
     return new ResponseEntity<LoginResponse>(loginResponse, headers, HttpStatus.OK);
   }
 
@@ -134,7 +141,7 @@ public class CustomerController {
    * @throws AuthenticationFailedException AuthenticationFailedException
    */
   @RequestMapping(method = RequestMethod.POST, path = "/customer/logout",
-      produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<LogoutResponse> logout(
       @RequestHeader("authorization") final String authorization)
       throws AuthorizationFailedException {
@@ -163,9 +170,9 @@ public class CustomerController {
    * @throws
    */
   @RequestMapping(method = RequestMethod.PUT, path = "/customer",
-      produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<UpdateCustomerResponse> update(
-      @RequestHeader("authorization") final String authorization, UpdateCustomerRequest updateCustomerRequest)
+      @RequestHeader("authorization") final String authorization, @RequestBody final UpdateCustomerRequest updateCustomerRequest)
       throws AuthorizationFailedException, UpdateCustomerException {
 
     //Get access token from authorization header
@@ -198,9 +205,9 @@ public class CustomerController {
    * @throws
    */
   @RequestMapping(method = RequestMethod.PUT, path = "/customer/password",
-      produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<UpdatePasswordResponse> changePassword(
-      @RequestHeader("authorization") final String authorization, UpdatePasswordRequest updatePasswordRequest)
+      @RequestHeader("authorization") final String authorization,@RequestBody final UpdatePasswordRequest updatePasswordRequest)
       throws AuthorizationFailedException, UpdateCustomerException {
 
     //Get access token from authorization header
