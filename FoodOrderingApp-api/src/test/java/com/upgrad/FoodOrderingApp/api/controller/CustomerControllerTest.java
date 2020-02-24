@@ -133,7 +133,7 @@ public class CustomerControllerTest {
         verify(mockCustomerService, times(1)).saveCustomer(any());
     }
 
-/*    // ----------------------------- POST /customer/login --------------------------------
+    // ----------------------------- POST /customer/login --------------------------------
 
     //This test case passes when you are able to login successfully.
     @Test
@@ -198,6 +198,7 @@ public class CustomerControllerTest {
                 .andExpect(jsonPath("code").value("ATH-002"));
         verify(mockCustomerService, times(1)).authenticate("9090909090", "IncorrectPassword");
     }
+
 
     // ----------------------------- POST /customer/logout --------------------------------
 
@@ -484,6 +485,6 @@ public class CustomerControllerTest {
                 .andExpect(jsonPath("code").value("UCR-001"));
         verify(mockCustomerService, times(1)).getCustomer("auth");
         verify(mockCustomerService, times(1)).updateCustomerPassword("oldPwd", "newPwd", customerEntity);
-    }*/
+    }
 
 }

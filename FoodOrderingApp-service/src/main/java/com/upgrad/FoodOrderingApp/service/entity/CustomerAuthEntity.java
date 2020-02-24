@@ -12,7 +12,7 @@ import java.io.Serializable;
 import java.time.ZonedDateTime;
 
 @Entity
-@Table(name = "customer_auth", schema = "postgres")
+@Table(name = "customer_auth")
 @NamedQueries({
         @NamedQuery(name = "customerAuthTokenByAccessToken",
                 query = "select ct from CustomerAuthEntity ct where ct.accessToken =:accessToken")
@@ -30,7 +30,7 @@ public class CustomerAuthEntity implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
-    private CustomerEntity customerEntity;
+    private CustomerEntity customer;
 
     @Column(name = "access_token")
     @NotNull
@@ -64,12 +64,12 @@ public class CustomerAuthEntity implements Serializable {
         this.uuid = uuid;
     }
 
-    public CustomerEntity getCustomerEntity() {
-        return customerEntity;
+    public CustomerEntity getCustomer() {
+        return customer;
     }
 
-    public void setCustomerEntity(CustomerEntity customerEntity) {
-        this.customerEntity = customerEntity;
+    public void setCustomer(CustomerEntity customer) {
+        this.customer = customer;
     }
 
     public String getAccessToken() {
