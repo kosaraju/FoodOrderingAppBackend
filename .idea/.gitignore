@@ -1,2 +1,16 @@
 # Default ignored files
 /workspace.xml
+/$PRODUCT_WORKSPACE_FILE$
+/.gitignore
+/.name
+/.checkstyle-idea.xml
+/compiler.xml
+/encodings.xml
+/misc.xml
+/uiDesigner.xml
+/vcs.xml
+../libraries
+../../FoodOrderingApp-api/target
+../../FoodOrderingApp-db/target
+../../FoodOrderingApp-service/target
+
