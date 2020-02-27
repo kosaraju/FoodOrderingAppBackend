@@ -1,4 +1,3 @@
-/*
 package com.upgrad.FoodOrderingApp.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,6 +27,7 @@ import java.util.Collections;
 import java.util.UUID;
 
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -184,7 +184,7 @@ public class AddressControllerTest {
     }
 
 
-    // ------------------------------------------ DELETE /address/{address_id} ------------------------------------------
+  /*  // ------------------------------------------ DELETE /address/{address_id} ------------------------------------------
 
     //This test case passes when you can successfully delete an address.
     @Test
@@ -304,7 +304,7 @@ public class AddressControllerTest {
         verify(mockCustomerService, times(1)).getCustomer("database_accesstoken2");
         verify(mockAddressService, times(1)).getAddressByUUID("82849cd5-106e-4b34-b9bf-94954c6ff527", customerEntity);
         verify(mockAddressService, times(0)).deleteAddress(any());
-    }
+    }*/
 
     // ------------------------------------------ GET /address/customer ------------------------------------------
 
@@ -389,7 +389,7 @@ public class AddressControllerTest {
                 .thenThrow(new AuthorizationFailedException("ATHR-003", "Your session is expired. Log in again to access this endpoint."));
 
         mockMvc
-                .perform(delete("/address/customer")
+                .perform(get("/address/customer")
                         .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                         .header("authorization", "Bearer database_accesstoken1"))
                 .andExpect(status().isForbidden())
@@ -433,4 +433,5 @@ public class AddressControllerTest {
         final StatesListResponse statesLists = new ObjectMapper().readValue(response, StatesListResponse.class);
         assertNull(statesLists.getStates());
     }
-}*/
+
+}

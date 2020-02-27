@@ -11,7 +11,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class CustomerDAO {
+public class CustomerDao {
 
 
     @PersistenceContext
