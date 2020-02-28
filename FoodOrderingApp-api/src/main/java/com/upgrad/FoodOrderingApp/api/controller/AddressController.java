@@ -117,7 +117,7 @@ public class AddressController {
     /*  The method handles delete  Address  request.It takes the authorization and path variables address UUID
   & produces response in DeleteAddressResponse and returns UUID of deleted address and Successfull message .If error Return error code and error Message.
    */
-    /*@CrossOrigin
+  @CrossOrigin
     @RequestMapping(method = RequestMethod.DELETE,path = "/address/{address_id}",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<DeleteAddressResponse> deleteSavedAddress(@RequestHeader ("authorization") final String authorization,@PathVariable(value = "address_id")final String addressUuid)throws AuthorizationFailedException,AddressNotFoundException{
 
@@ -142,7 +142,7 @@ public class AddressController {
 
 
     }
-*/
+
     /*  The method handles States request.It produces response in StatesListResponse and returns UUID & stateName .If error Return error code and error Message.
      */
     @CrossOrigin
