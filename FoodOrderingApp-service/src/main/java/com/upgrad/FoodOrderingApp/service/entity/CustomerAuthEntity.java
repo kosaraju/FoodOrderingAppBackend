@@ -1,59 +1,58 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
-
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.sql.Time;
 import java.time.ZonedDateTime;
 
-//This Class represents the CustomerAuth table in the DB.
-
 @Entity
-@Table(name = "customer_auth",uniqueConstraints = {@UniqueConstraint(columnNames = {"uuid"})})
+@Table(name = "customer_auth")
 @NamedQueries({
-        @NamedQuery(name = "getCustomerAuthByAccessToken", query = "SELECT c from CustomerAuthEntity c where c.accessToken = :access_Token"),
+        @NamedQuery(name = "customerAuthTokenByAccessToken",
+                query = "select ct from CustomerAuthEntity ct where ct.accessToken =:accessToken")
 })
 public class CustomerAuthEntity implements Serializable {
 
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private long id;
 
     @Column(name = "uuid")
-    @Size (max = 200)
-    @NotNull
+    @Size(max = 200)
     private String uuid;
 
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name = "customer_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private CustomerEntity customer;
 
     @Column(name = "access_token")
+    @NotNull
     @Size(max = 500)
     private String accessToken;
 
-
     @Column(name = "login_at")
+    @NotNull
     private ZonedDateTime loginAt;
+
+    @Column(name = "expires_at")
+    @NotNull
+    private ZonedDateTime expiresAt;
 
     @Column(name = "logout_at")
     private ZonedDateTime logoutAt;
 
-    @Column(name = "expires_at")
-    private ZonedDateTime expiresAt;
-
-    public Integer getId() {
-        return this.id;
+    public long getId() {
+        return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -89,6 +88,14 @@ public class CustomerAuthEntity implements Serializable {
         this.loginAt = loginAt;
     }
 
+    public ZonedDateTime getExpiresAt() {
+        return expiresAt;
+    }
+
+    public void setExpiresAt(ZonedDateTime expiresAt) {
+        this.expiresAt = expiresAt;
+    }
+
     public ZonedDateTime getLogoutAt() {
         return logoutAt;
     }
@@ -97,11 +104,18 @@ public class CustomerAuthEntity implements Serializable {
         this.logoutAt = logoutAt;
     }
 
-    public ZonedDateTime getExpiresAt() {
-        return expiresAt;
+    @Override
+    public boolean equals(Object obj) {
+        return new EqualsBuilder().append(this, obj).isEquals();
     }
 
-    public void setExpiresAt(ZonedDateTime expiresAt) {
-        this.expiresAt = expiresAt;
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(this).hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 }
