@@ -47,7 +47,7 @@ public class ItemController {
         itemEntities.forEach(itemEntity -> {
             ItemList itemList = new ItemList()
                     .id(UUID.fromString(itemEntity.getUuid()))
-                    .itemName(itemEntity.getitemName())
+                    .itemName(itemEntity.getItemName())
                     .price(itemEntity.getPrice())
                     .itemType(ItemList.ItemTypeEnum.fromValue(itemEntity.getType().getValue()));
             itemListResponse.add(itemList);
