@@ -184,7 +184,7 @@ public class AddressControllerTest {
     }
 
 
-  /*  // ------------------------------------------ DELETE /address/{address_id} ------------------------------------------
+   // ------------------------------------------ DELETE /address/{address_id} ------------------------------------------
 
     //This test case passes when you can successfully delete an address.
     @Test
@@ -304,7 +304,7 @@ public class AddressControllerTest {
         verify(mockCustomerService, times(1)).getCustomer("database_accesstoken2");
         verify(mockAddressService, times(1)).getAddressByUUID("82849cd5-106e-4b34-b9bf-94954c6ff527", customerEntity);
         verify(mockAddressService, times(0)).deleteAddress(any());
-    }*/
+    }
 
     // ------------------------------------------ GET /address/customer ------------------------------------------
 

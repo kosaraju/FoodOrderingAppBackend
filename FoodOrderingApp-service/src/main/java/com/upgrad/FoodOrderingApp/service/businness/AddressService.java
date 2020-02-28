@@ -33,8 +33,8 @@ public class AddressService {
     @Autowired
     CustomerAddressDao customerAddressDao; //Handles all Data of CustomerAddressEntity
 
-    /*@Autowired
-    OrderDao orderDao; //Handles all Data of Orders Entity*/
+    @Autowired
+    OrderDao orderDao; //Handles all Data of Orders Entity
 
     /* This method is to saveAddress.Takes the Address and state entity and saves the Address to the DB.
     If error throws exception with error code and error message.
@@ -136,7 +136,7 @@ public class AddressService {
 
     /*This method is to deleteAddress of the customerEntity.This method returns Address Entity.
      */
-  /*  @Transactional(propagation = Propagation.REQUIRED)
+   @Transactional(propagation = Propagation.REQUIRED)
     public AddressEntity deleteAddress(AddressEntity addressEntity) {
 
         //Calls getOrdersByAddress of orderDao to orders with corresponding address.
@@ -155,7 +155,7 @@ public class AddressService {
             return updatedAddressActiveStatus;
         }
     }
-*/
+
     /*This method is to getAllStates in DB.
      */
     public List<StateEntity> getAllStates(){
