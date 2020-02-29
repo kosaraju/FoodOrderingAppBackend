@@ -1,5 +1,4 @@
-/*
-package com.upgrad.FoodOrderingApp.api.controller;
+ package com.upgrad.FoodOrderingApp.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.upgrad.FoodOrderingApp.api.model.CategoriesListResponse;
@@ -8,6 +7,7 @@ import com.upgrad.FoodOrderingApp.service.businness.CategoryService;
 import com.upgrad.FoodOrderingApp.service.entity.CategoryEntity;
 import com.upgrad.FoodOrderingApp.service.entity.ItemEntity;
 import com.upgrad.FoodOrderingApp.service.exception.CategoryNotFoundException;
+import com.upgrad.FoodOrderingApp.service.type.ItemType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +20,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collections;
 import java.util.UUID;
-
-import static com.upgrad.FoodOrderingApp.service.common.ItemType.NON_VEG;
+import static org.junit.Assert.assertEquals;
+//import static com.upgrad.FoodOrderingApp.service.common.ItemType;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -40,13 +40,13 @@ public class CategoryControllerTest {
     @MockBean
     private CategoryService mockCategoryService;
 
-    //This test case passes when you have are able to fetch any category by its id.
+   //This test case passes when you have are able to fetch any category by its id.
     @Test
     public void shouldGetCategoryById() throws Exception {
         final ItemEntity itemEntity = new ItemEntity();
         itemEntity.setItemName("myItem");
         itemEntity.setPrice(200);
-        itemEntity.setType(NON_VEG);
+        itemEntity.setType(ItemType.NON_VEG);
         final String itemId = UUID.randomUUID().toString();
         itemEntity.setUuid(itemId);
 
@@ -139,4 +139,4 @@ public class CategoryControllerTest {
     }
 
 
-}*/
+}
