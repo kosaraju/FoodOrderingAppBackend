@@ -1,18 +1,25 @@
-package com.upgrad.FoodOrderingApp.service.businness;
+package com.upgrad.FoodOrderingApp.service.business;
 
-import com.upgrad.FoodOrderingApp.service.common.UtilityProvider;
-import com.upgrad.FoodOrderingApp.service.dao.*;
-import com.upgrad.FoodOrderingApp.service.entity.*;
+import com.upgrad.FoodOrderingApp.service.dao.AddressDao;
+import com.upgrad.FoodOrderingApp.service.dao.CustomerAddressDao;
+import com.upgrad.FoodOrderingApp.service.dao.CustomerAuthDao;
+import com.upgrad.FoodOrderingApp.service.dao.OrderDao;
+import com.upgrad.FoodOrderingApp.service.dao.StateDao;
+import com.upgrad.FoodOrderingApp.service.entity.AddressEntity;
+import com.upgrad.FoodOrderingApp.service.entity.CustomerAddressEntity;
+import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
+import com.upgrad.FoodOrderingApp.service.entity.OrderEntity;
+import com.upgrad.FoodOrderingApp.service.entity.StateEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AddressNotFoundException;
 import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.SaveAddressException;
+import com.upgrad.FoodOrderingApp.service.util.UtilityProvider;
+import java.util.LinkedList;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.LinkedList;
-import java.util.List;
 
 //This Class handles all service related to the address
 
@@ -140,7 +147,7 @@ public class AddressService {
     public AddressEntity deleteAddress(AddressEntity addressEntity) {
 
         //Calls getOrdersByAddress of orderDao to orders with corresponding address.
-        List<OrdersEntity> ordersEntities = orderDao.getOrdersByAddress(addressEntity);
+     List<OrderEntity> ordersEntities = orderDao.getOrdersByAddress(addressEntity);
 
         if(ordersEntities == null||ordersEntities.isEmpty()) { //Checking if no orders are present with this address.
             //Calls deleteAddress of addressDao to delete the corresponding address.

@@ -1,88 +1,96 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
-
-import javax.persistence.*;
+import java.util.Date;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
-import java.sql.Timestamp;
-import java.time.ZonedDateTime;
-import java.util.Date;
-
-//This Class represents the Orders table in the DB
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "orders",uniqueConstraints = {@UniqueConstraint(columnNames = {"uuid"})})
 @NamedQueries({
-        @NamedQuery(name = "getOrdersByCustomers",query = "SELECT o FROM OrdersEntity o WHERE o.customer = :customer ORDER BY o.date DESC "),
-        @NamedQuery(name = "getOrdersByRestaurant",query = "SELECT o FROM OrdersEntity o WHERE o.restaurant = :restaurant"),
-        @NamedQuery(name = "getOrdersByAddress",query = "SELECT o FROM OrdersEntity o WHERE o.address = :address")
+    @NamedQuery(name = "pastOrdersByCustomerUUID", query = "select o from OrderEntity o where o.customer.uuid = :customerUUID order by o.date desc"),
+    @NamedQuery(name = "getOrdersByCustomers", query = "SELECT o FROM OrderEntity o WHERE o.customer = :customer ORDER BY o.date DESC "),
+    @NamedQuery(name = "getOrdersByRestaurant", query = "SELECT o FROM OrderEntity o WHERE o.restaurant = :restaurant"),
+    @NamedQuery(name = "getOrdersByAddress", query = "SELECT o FROM OrderEntity o WHERE o.address = :address")
 })
-public class OrdersEntity implements Serializable {
-
+public class OrderEntity {
 
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "uuid")
+  @Column(name = "uuid", unique = true)
+  @NotNull
     @Size(max = 200)
-    @NotNull
     private String uuid;
-
 
     @Column(name = "bill")
     @NotNull
-    private double bill;
+    private Double bill;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne
     @JoinColumn(name = "coupon_id")
     private CouponEntity coupon;
 
-    @Column(name = "discount")
-    private double discount;
+  // Set default value
+  @Column(name = "discount")
+  @ColumnDefault("0")
+  private Double discount = 0.0;
 
     @Column(name = "date")
     @NotNull
-    private Timestamp  date;
+    private Date date;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne
+  @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "payment_id")
     private PaymentEntity payment;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne
+  @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "customer_id")
-    @NotNull
     private CustomerEntity customer;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne
     @JoinColumn(name = "address_id")
-    @NotNull
     private AddressEntity address;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne
+  @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "restaurant_id")
-    @NotNull
     private RestaurantEntity restaurant;
 
-    public OrdersEntity(){
-
+  public OrderEntity() {
     }
 
-    public OrdersEntity(String uuid, Double bill, CouponEntity couponEntity, Double discount, Timestamp orderDate, PaymentEntity paymentEntity, CustomerEntity customerEntity, AddressEntity addressEntity, RestaurantEntity restaurantEntity) {
+  public OrderEntity(@NotNull @Size(max = 200) String uuid, @NotNull Double bill,
+      CouponEntity coupon,
+      Double discount, @NotNull Date date, PaymentEntity payment, CustomerEntity customer,
+      AddressEntity address, RestaurantEntity restaurant) {
         this.uuid = uuid;
         this.bill = bill;
-        this.coupon = couponEntity;
+    this.coupon = coupon;
         this.discount = discount;
-        this.date = orderDate;
-        this.payment = paymentEntity;
-        this.customer = customerEntity;
-        this.address = addressEntity;
-        this.restaurant = restaurantEntity;
-
+    this.date = date;
+    this.payment = payment;
+    this.customer = customer;
+    this.address = address;
+    this.restaurant = restaurant;
     }
-
 
     public Integer getId() {
         return id;
@@ -104,7 +112,7 @@ public class OrdersEntity implements Serializable {
         return bill;
     }
 
-    public void setBill(Float bill) {
+  public void setBill(Double bill) {
         this.bill = bill;
     }
 
@@ -124,11 +132,11 @@ public class OrdersEntity implements Serializable {
         this.discount = discount;
     }
 
-    public Timestamp getDate() {
+  public Date getDate() {
         return date;
     }
 
-    public void setDate(Timestamp date) {
+  public void setDate(Date date) {
         this.date = date;
     }
 

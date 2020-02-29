@@ -1,12 +1,26 @@
-package com.upgrad.FoodOrderingApp.service.businness;
+package com.upgrad.FoodOrderingApp.service.business;
 
-import com.upgrad.FoodOrderingApp.service.common.UtilityProvider;
-import com.upgrad.FoodOrderingApp.service.dao.*;
-import com.upgrad.FoodOrderingApp.service.entity.*;
+import com.upgrad.FoodOrderingApp.service.dao.CategoryDao;
+import com.upgrad.FoodOrderingApp.service.dao.CategoryItemDao;
+import com.upgrad.FoodOrderingApp.service.dao.ItemDao;
+import com.upgrad.FoodOrderingApp.service.dao.OrderDao;
+import com.upgrad.FoodOrderingApp.service.dao.RestaurantDao;
+import com.upgrad.FoodOrderingApp.service.dao.RestaurantItemDao;
+import com.upgrad.FoodOrderingApp.service.entity.CategoryEntity;
+import com.upgrad.FoodOrderingApp.service.entity.CategoryItemEntity;
+import com.upgrad.FoodOrderingApp.service.entity.ItemEntity;
+import com.upgrad.FoodOrderingApp.service.entity.OrderEntity;
+import com.upgrad.FoodOrderingApp.service.entity.OrderItemEntity;
+import com.upgrad.FoodOrderingApp.service.entity.RestaurantEntity;
+import com.upgrad.FoodOrderingApp.service.entity.RestaurantItemEntity;
 import com.upgrad.FoodOrderingApp.service.exception.ItemNotFoundException;
+import com.upgrad.FoodOrderingApp.service.util.UtilityProvider;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.*;
 
 //This Class handles all service related to the Item
 
@@ -28,8 +42,6 @@ public class ItemService {
     @Autowired
     CategoryDao categoryDao;
 
-    @Autowired
-    OrderItemDao orderItemDao;
 
     @Autowired
     OrderDao orderDao;
@@ -73,8 +85,8 @@ public class ItemService {
      */
     public List<ItemEntity> getItemsByPopularity(RestaurantEntity restaurantEntity) {
 
-        //Calls getOrdersByRestaurant method of orderDao to get the  OrdersEntity
-        List <OrdersEntity> ordersEntities = orderDao.getOrdersByRestaurant(restaurantEntity);
+      //Calls getOrdersByRestaurant method of orderDao to get the  OrderEntity
+      List<OrderEntity> ordersEntities = orderDao.getOrdersByRestaurant(restaurantEntity);
 
         //Creating list of ItemEntity which are ordered from the restaurant.
         List <ItemEntity> itemEntities = new LinkedList<>();
@@ -82,7 +94,7 @@ public class ItemService {
         //Looping in for each ordersEntity in ordersEntities to get the corresponding orders
         ordersEntities.forEach(ordersEntity -> {
             //Calls getItemsByOrders method of orderItemDao to get the  OrderItemEntity
-            List <OrderItemEntity> orderItemEntities = orderItemDao.getItemsByOrders(ordersEntity);
+          List<OrderItemEntity> orderItemEntities = orderDao.getItemsByOrders(ordersEntity);
             orderItemEntities.forEach(orderItemEntity -> { //Looping in to get each tem from the OrderItemEntity.
                 itemEntities.add(orderItemEntity.getItem());
             });

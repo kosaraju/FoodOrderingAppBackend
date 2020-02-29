@@ -1,17 +1,14 @@
 package com.upgrad.FoodOrderingApp.service.dao;
 
 import com.upgrad.FoodOrderingApp.service.entity.AddressEntity;
-import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
-import com.upgrad.FoodOrderingApp.service.entity.OrdersEntity;
+import com.upgrad.FoodOrderingApp.service.entity.OrderEntity;
+import com.upgrad.FoodOrderingApp.service.entity.OrderItemEntity;
 import com.upgrad.FoodOrderingApp.service.entity.RestaurantEntity;
-import org.springframework.stereotype.Repository;
-
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import java.util.List;
-
-//This Class is created to access DB with respect to Order entity
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class OrderDao {
@@ -19,39 +16,75 @@ public class OrderDao {
     @PersistenceContext
     private EntityManager entityManager;
 
-    //To save Order in the db
-    public OrdersEntity saveOrder(OrdersEntity ordersEntity){
-        entityManager.persist(ordersEntity);
-        return ordersEntity;
+  /**
+   * Saves the Order Information in the Database
+   *
+   * @param order The order details to be saved
+   * @return The persisted order with id value generated
+   */
+  public OrderEntity saveOrderDetail(OrderEntity order) {
+    entityManager.persist(order);
+    return order;
+  }
+
+  /**
+   * Saves the Order Item Information in the Database
+   *
+   * @param orderItem The order item details to be saved
+   * @return The persisted order item with id value generated
+   */
+  public OrderItemEntity saveOrderItem(OrderItemEntity orderItem) {
+    entityManager.persist(orderItem);
+    return orderItem;
+  }
+
+  /**
+   * Retrieves the list of previously placed orders ordered by the date placed descending
+   *
+   * @param customerUUID The uuid of the customer for which orders has to be retrieved
+   * @return The Order details sorted in descending order of the data placed
+   */
+  public List<OrderEntity> getPastOrdersByCustomerId(String customerUUID) {
+    return entityManager.createNamedQuery("pastOrdersByCustomerUUID", OrderEntity.class)
+        .setParameter("customerUUID", customerUUID).getResultList();
     }
 
-    //To get List of order from the db Corresponding to Customers
-    public List<OrdersEntity> getOrdersByCustomers(CustomerEntity customerEntity) {
-        try {
-            List<OrdersEntity> ordersEntities = entityManager.createNamedQuery("getOrdersByCustomers",OrdersEntity.class).setParameter("customer",customerEntity).getResultList();
-            return ordersEntities;
-        }catch (NoResultException nre){
-            return null;
-        }
+    //To get the
+    public List<OrderItemEntity> getItemsByOrders(OrderEntity orderEntity) {
+      try {
+        List<OrderItemEntity> orderItemEntities = entityManager
+            .createNamedQuery("getItemsByOrders", OrderItemEntity.class)
+            .setParameter("ordersEntity",
+                orderEntity).getResultList();
+        return orderItemEntities;
+      } catch (NoResultException nre) {
+        return null;
+      }
     }
+
 
     //To get list of OrdersEntity by the restaurant if no result then null is returned
-    public List<OrdersEntity> getOrdersByRestaurant(RestaurantEntity restaurantEntity){
-        try{
-            List<OrdersEntity> ordersEntities = entityManager.createNamedQuery("getOrdersByRestaurant",OrdersEntity.class).setParameter("restaurant",restaurantEntity).getResultList();
-            return ordersEntities;
+    public List<OrderEntity> getOrdersByRestaurant(RestaurantEntity restaurantEntity) {
+      try {
+        List<OrderEntity> ordersEntities = entityManager
+            .createNamedQuery("getOrdersByRestaurant", OrderEntity.class)
+            .setParameter("restaurant", restaurantEntity).getResultList();
+        return ordersEntities;
         }catch (NoResultException nre){
             return null;
         }
     }
 
     //To get all the order corresponding to the address
-    public List<OrdersEntity> getOrdersByAddress(AddressEntity addressEntity) {
-        try{
-            List<OrdersEntity> ordersEntities = entityManager.createNamedQuery("getOrdersByAddress",OrdersEntity.class).setParameter("address",addressEntity).getResultList();
-            return ordersEntities;
+    public List<OrderEntity> getOrdersByAddress(AddressEntity addressEntity) {
+      try {
+        List<OrderEntity> ordersEntities = entityManager
+            .createNamedQuery("getOrdersByAddress", OrderEntity.class)
+            .setParameter("address", addressEntity).getResultList();
+        return ordersEntities;
         }catch (NoResultException nre) {
             return null;
         }
     }
+
 }

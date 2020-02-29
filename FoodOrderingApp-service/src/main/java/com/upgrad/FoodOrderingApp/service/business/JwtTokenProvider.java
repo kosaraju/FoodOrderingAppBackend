@@ -1,10 +1,9 @@
-package com.upgrad.FoodOrderingApp.service.businness;
+package com.upgrad.FoodOrderingApp.service.business;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.upgrad.FoodOrderingApp.service.common.GenericErrorCode;
 import com.upgrad.FoodOrderingApp.service.common.UnexpectedException;
-
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoField;
 import java.util.Date;
