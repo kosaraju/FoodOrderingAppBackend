@@ -1,12 +1,19 @@
-package com.upgrad.FoodOrderingApp.service.common;
+package com.upgrad.FoodOrderingApp.service.util;
 
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
-import com.upgrad.FoodOrderingApp.service.exception.*;
-import org.springframework.stereotype.Component;
-
-import java.util.*;
+import com.upgrad.FoodOrderingApp.service.exception.AuthenticationFailedException;
+import com.upgrad.FoodOrderingApp.service.exception.SignUpRestrictedException;
+import com.upgrad.FoodOrderingApp.service.exception.UpdateCustomerException;
+import java.util.Base64;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.springframework.stereotype.Component;
 
 //This Class Provides various utilities.
 
@@ -14,39 +21,15 @@ import java.util.regex.Pattern;
 public class UtilityProvider {
 
 
-    //To validate the password as per given conditions,1Uppercase,1Lowercase,1Number,1SpecialCharacter and atleast 8 characters.
-    public boolean isValidPassword(String password){
-        Boolean lowerCase = false;
-        Boolean upperCase = false;
-        Boolean number = false;
-        Boolean specialCharacter = false;
-
-        if(password.length() < 8){
-            return false;
-        }
-
-        if(password.matches("(?=.*[0-9]).*")){
-            number = true;
-        }
-
-        if(password.matches("(?=.*[a-z]).*")){
-            lowerCase = true;
-        }
-        if(password.matches("(?=.*[A-Z]).*")){
-            upperCase = true;
-        }
-        if(password.matches("(?=.*[#@$%&*!^]).*")){
-            specialCharacter = true;
-        }
-
-        if(lowerCase && upperCase){
-            if(specialCharacter && number){
-                return true;
-            }
-        }else{
-            return false;
-        }
-        return false;
+  /**
+   * Checks if the input string is an invalid String (null or empty) Mainly used to validate the
+   * request input elements
+   *
+   * @param value The field to be checked for validation
+   * @return true if value is null or empty, false otherwise
+   */
+  public static Boolean isInValid(String value) {
+    return (value == null || value.isEmpty());
     }
 
     //To validate the ContactNo
@@ -151,6 +134,38 @@ public class UtilityProvider {
 
         return sortedByValueMap;
     }
+
+  //To validate the password as per given conditions,1Uppercase,1Lowercase,1Number,1SpecialCharacter and atleast 8 characters.
+  public boolean isValidPassword(String password) {
+    Boolean lowerCase = false;
+    Boolean upperCase = false;
+    Boolean number = false;
+    Boolean specialCharacter = false;
+
+    if (password.length() < 8) {
+      return false;
+    }
+
+    if (password.matches("(?=.*[0-9]).*")) {
+      number = true;
+    }
+
+    if (password.matches("(?=.*[a-z]).*")) {
+      lowerCase = true;
+    }
+    if (password.matches("(?=.*[A-Z]).*")) {
+      upperCase = true;
+    }
+    if (password.matches("(?=.*[#@$%&*!^]).*")) {
+      specialCharacter = true;
+    }
+
+    if (lowerCase && upperCase) {
+      return specialCharacter && number;
+    } else {
+      return false;
+    }
+  }
 
 }
 

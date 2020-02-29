@@ -1,38 +1,39 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
-
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-
-//This Class represents the OrderItem table in the DB
-
 @Entity
-@Table(name = "order_item")
+@Table(name = "ORDER_ITEM")
 @NamedQueries({
-
-        @NamedQuery(name = "getOrderItemsByOrder",query = "SELECT o FROM OrderItemEntity o WHERE o.order = :orders ORDER BY LOWER(o.item.itemName) ASC"),
-        @NamedQuery(name = "getItemsByOrders",query = "SELECT o FROM OrderItemEntity o WHERE o.order = :ordersEntity"),
-
+    @NamedQuery(name = "itemsByOrderId", query = "select o from OrderItemEntity o where o.order.id = :id")
 })
-public class OrderItemEntity implements Serializable {
-
+public class OrderItemEntity {
 
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne
+  @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "order_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
-    private OrdersEntity order;
+  private OrderEntity order;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne
+  @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "item_id")
     @NotNull
     private ItemEntity item;
@@ -53,11 +54,11 @@ public class OrderItemEntity implements Serializable {
         this.id = id;
     }
 
-    public OrdersEntity getOrder() {
+  public OrderEntity getOrder() {
         return order;
     }
 
-    public void setOrder(OrdersEntity order) {
+  public void setOrder(OrderEntity order) {
         this.order = order;
     }
 

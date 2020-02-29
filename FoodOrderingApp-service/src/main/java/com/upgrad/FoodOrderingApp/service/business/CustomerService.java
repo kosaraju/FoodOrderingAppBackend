@@ -1,4 +1,4 @@
-package com.upgrad.FoodOrderingApp.service.businness;
+package com.upgrad.FoodOrderingApp.service.business;
 
 import com.upgrad.FoodOrderingApp.service.dao.CustomerDao;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
@@ -9,12 +9,11 @@ import com.upgrad.FoodOrderingApp.service.exception.SignUpRestrictedException;
 import com.upgrad.FoodOrderingApp.service.exception.UpdateCustomerException;
 import java.time.ZonedDateTime;
 import java.util.UUID;
+import java.util.regex.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.regex.Pattern;
 
 @Service
 public class CustomerService {
@@ -189,22 +188,17 @@ public class CustomerService {
    */
   public String getBearerAccessToken(final String authorization)
       throws AuthorizationFailedException {
-
-    String[] tokens = authorization.split("Bearer ");
-    String accessToken = null;
     try {
-      //If the request adheres to 'Bearer accessToken', above split would put token in index 1
-      accessToken = tokens[1];
-    } catch (IndexOutOfBoundsException ie) {
-      //If the request doesn't adheres to 'Bearer accessToken', try to read token in index 0
-      accessToken = tokens[0];
-      //for scenarios where those users don't adhere to adding prefix of Bearer like test cases
-      if (accessToken == null) {
-        throw new AuthorizationFailedException("ATH-005", "Use format: 'Bearer accessToken'");
+      String[] bearerToken = authorization.split("Bearer ");
+      if (bearerToken != null && bearerToken.length > 1) {
+        String accessToken = bearerToken[1];
+        return accessToken;
+      } else {
+        throw new AuthorizationFailedException("ATHR-001", "Customer is not Logged in.");
       }
+    } catch (ArrayIndexOutOfBoundsException e) {
+      throw new AuthorizationFailedException("ATHR-001", "Customer is not Logged in.");
     }
-
-    return accessToken;
   }
 
   /**Update Customer.

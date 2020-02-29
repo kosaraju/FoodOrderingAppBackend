@@ -1,29 +1,32 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
-
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
-
-//This Class represents the Coupon table in the DB
 
 @Entity
-@Table(name = "coupon",uniqueConstraints = {@UniqueConstraint(columnNames = {"uuid"})})
+@Table(name = "coupon")
 @NamedQueries({
-        @NamedQuery(name = "getCouponByCouponName",query = "SELECT c FROM CouponEntity c WHERE c.couponName = :coupon_name"),
-        @NamedQuery(name = "getCouponByCouponId",query = "SELECT c FROM  CouponEntity c WHERE c.uuid = :uuid"),
+    @NamedQuery(name = "couponByCouponName", query = "select c from CouponEntity c where c.couponName = :couponName"),
+    @NamedQuery(name = "couponByUUID", query = "select c from CouponEntity c where c.uuid = :couponUUID")
 })
-public class CouponEntity implements Serializable {
+public class CouponEntity {
 
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "uuid")
-    @Size(max = 200)
+  @Column(name = "uuid", unique = true)
     @NotNull
+  @Size(max = 200)
     private String uuid;
 
     @Column(name = "coupon_name")
@@ -34,13 +37,13 @@ public class CouponEntity implements Serializable {
     @NotNull
     private Integer percent;
 
-    public CouponEntity(){
-
+  public CouponEntity() {
     }
 
-    public CouponEntity(String couponId, String myCoupon, int percent) {
-        this.uuid = couponId;
-        this.couponName = myCoupon;
+  public CouponEntity(@NotNull @Size(max = 200) String uuid, @Size(max = 255) String couponName,
+      @NotNull Integer percent) {
+    this.uuid = uuid;
+    this.couponName = couponName;
         this.percent = percent;
     }
 
