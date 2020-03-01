@@ -1,5 +1,6 @@
  package com.upgrad.FoodOrderingApp.api.controller;
 
+ import static com.upgrad.FoodOrderingApp.service.common.ItemType.NON_VEG;
  import static org.junit.Assert.assertEquals;
  import static org.junit.Assert.assertNull;
  import static org.mockito.Mockito.anyString;
@@ -17,7 +18,6 @@
  import com.upgrad.FoodOrderingApp.service.entity.CategoryEntity;
  import com.upgrad.FoodOrderingApp.service.entity.ItemEntity;
  import com.upgrad.FoodOrderingApp.service.exception.CategoryNotFoundException;
- import com.upgrad.FoodOrderingApp.service.type.ItemType;
  import java.util.Collections;
  import java.util.UUID;
  import org.junit.Test;
@@ -29,8 +29,6 @@
  import org.springframework.http.MediaType;
  import org.springframework.test.context.junit4.SpringRunner;
  import org.springframework.test.web.servlet.MockMvc;
-
-//import static com.upgrad.FoodOrderingApp.service.common.ItemType;
 
 // This class contains all the test cases regarding the category controller
 @RunWith(SpringRunner.class)
@@ -50,7 +48,7 @@ public class CategoryControllerTest {
         final ItemEntity itemEntity = new ItemEntity();
         itemEntity.setItemName("myItem");
         itemEntity.setPrice(200);
-        itemEntity.setType(ItemType.NON_VEG);
+      itemEntity.setType(NON_VEG);
         final String itemId = UUID.randomUUID().toString();
         itemEntity.setUuid(itemId);
 
