@@ -1,14 +1,20 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
+import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.io.Serializable;
 
 @Entity
 @Table(name = "customer")
@@ -16,7 +22,7 @@ import java.io.Serializable;
         @NamedQuery(name = "customerById", query = "select c from CustomerEntity c where c.id = :id"),
         @NamedQuery(name = "customerByUUID", query = "select c from CustomerEntity c where c.uuid = :uuid"),
         @NamedQuery(name = "customerByEmail", query = "select c from CustomerEntity c where c.email = :email"),
-        @NamedQuery(name = "customerByContactNumber", query = "select c from CustomerEntity c where c.contactnumber = :contactnumber")
+    @NamedQuery(name = "customerByContactNumber", query = "select c from CustomerEntity c where c.contactNumber = :contactNumber")
 
 })
 public class CustomerEntity implements Serializable {
@@ -58,7 +64,7 @@ public class CustomerEntity implements Serializable {
     @Column(name = "contact_number")
     @Size(max = 30)
     @NotNull
-    private String contactnumber;
+    private String contactNumber;
 
     public long getId() {
         return id;
@@ -116,12 +122,12 @@ public class CustomerEntity implements Serializable {
         this.salt = salt;
     }
 
-    public String getContactnumber() {
-        return contactnumber;
+    public String getContactNumber() {
+        return contactNumber;
     }
 
-    public void setContactnumber(String contactnumber) {
-        this.contactnumber = contactnumber;
+    public void setContactNumber(String contactNumber) {
+        this.contactNumber = contactNumber;
     }
 
 
