@@ -9,8 +9,8 @@ import com.upgrad.FoodOrderingApp.api.model.SaveAddressRequest;
 import com.upgrad.FoodOrderingApp.api.model.SaveAddressResponse;
 import com.upgrad.FoodOrderingApp.api.model.StatesList;
 import com.upgrad.FoodOrderingApp.api.model.StatesListResponse;
-import com.upgrad.FoodOrderingApp.service.business.AddressService;
-import com.upgrad.FoodOrderingApp.service.business.CustomerService;
+import com.upgrad.FoodOrderingApp.service.businness.AddressService;
+import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
 import com.upgrad.FoodOrderingApp.service.entity.AddressEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerAddressEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
@@ -18,6 +18,7 @@ import com.upgrad.FoodOrderingApp.service.entity.StateEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AddressNotFoundException;
 import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.SaveAddressException;
+import com.upgrad.FoodOrderingApp.service.util.UtilityProvider;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -56,7 +57,7 @@ public class AddressController {
     public ResponseEntity<SaveAddressResponse> saveAddress(@RequestHeader("authorization") final String authorization, @RequestBody(required = false)SaveAddressRequest saveAddressRequest)throws AuthorizationFailedException, AddressNotFoundException, SaveAddressException {
 
         //Access the accessToken from the request Header
-        String accessToken = authorization.split("Bearer ")[1];
+      String accessToken = UtilityProvider.decodeBearerToken(authorization);
 
         //Calls customerService getCustomer Method to check the validity of the customer.this methods returns the customerEntity  to be updated  with address.
         CustomerEntity customerEntity = customerService.getCustomer(accessToken);
@@ -95,7 +96,7 @@ public class AddressController {
     public ResponseEntity<AddressListResponse> getAllSavedAddress(@RequestHeader("authorization")final String authorization)throws AuthorizationFailedException{
 
         //Access the accessToken from the request Header
-        String accessToken = authorization.split("Bearer ")[1];
+      String accessToken = UtilityProvider.decodeBearerToken(authorization);
 
         //Calls customerService getCustomer Method to check the validity of the customer.this methods returns the customerEntity  to be get all address.
         CustomerEntity customerEntity = customerService.getCustomer(accessToken);
@@ -131,10 +132,13 @@ public class AddressController {
    */
   @CrossOrigin
     @RequestMapping(method = RequestMethod.DELETE,path = "/address/{address_id}",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<DeleteAddressResponse> deleteSavedAddress(@RequestHeader ("authorization") final String authorization,@PathVariable(value = "address_id")final String addressUuid)throws AuthorizationFailedException,AddressNotFoundException{
+  public ResponseEntity<DeleteAddressResponse> deleteSavedAddress(
+      @RequestHeader("authorization") final String authorization,
+      @PathVariable(value = "address_id") final String addressUuid)
+      throws AuthorizationFailedException, AddressNotFoundException {
 
         //Access the accessToken from the request Header
-        String accessToken = authorization.split("Bearer ")[1];
+    String accessToken = UtilityProvider.decodeBearerToken(authorization);
 
         //Calls customerService getCustomer Method to check the validity of the customer.this methods returns the customerEntity of whose address be deleted.
         CustomerEntity customerEntity = customerService.getCustomer(accessToken);
@@ -159,7 +163,6 @@ public class AddressController {
      */
     @CrossOrigin
     @RequestMapping(method = RequestMethod.GET,path = "/states",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-
     public ResponseEntity<StatesListResponse> getAllStates(){
 
         //Calls getAllStates method in addressService and returns list of stateEntity.

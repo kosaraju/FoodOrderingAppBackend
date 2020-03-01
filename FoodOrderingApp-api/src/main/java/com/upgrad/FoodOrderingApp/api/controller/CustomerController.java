@@ -8,13 +8,14 @@ import com.upgrad.FoodOrderingApp.api.model.UpdateCustomerRequest;
 import com.upgrad.FoodOrderingApp.api.model.UpdateCustomerResponse;
 import com.upgrad.FoodOrderingApp.api.model.UpdatePasswordRequest;
 import com.upgrad.FoodOrderingApp.api.model.UpdatePasswordResponse;
-import com.upgrad.FoodOrderingApp.service.business.CustomerService;
+import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AuthenticationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.SignUpRestrictedException;
 import com.upgrad.FoodOrderingApp.service.exception.UpdateCustomerException;
+import com.upgrad.FoodOrderingApp.service.util.UtilityProvider;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -145,7 +146,7 @@ public class CustomerController {
       throws AuthorizationFailedException {
 
     //Get access token from authorization header
-    String jwtToken = customerService.getBearerAccessToken(authorization);
+    String jwtToken = UtilityProvider.decodeBearerToken(authorization);
 
     //Invoke business service to logoff
     CustomerAuthEntity userAuthEntity = customerService.logout(jwtToken);
@@ -174,7 +175,7 @@ public class CustomerController {
       throws AuthorizationFailedException, UpdateCustomerException {
 
     //Get access token from authorization header
-    String jwtToken = customerService.getBearerAccessToken(authorization);
+    String jwtToken = UtilityProvider.decodeBearerToken(authorization);
 
     if(updateCustomerRequest.getFirstName()==null || updateCustomerRequest.getFirstName().trim().isEmpty()){
         throw new UpdateCustomerException("UCR-002","First name field should not be empty");
@@ -209,7 +210,7 @@ public class CustomerController {
       throws AuthorizationFailedException, UpdateCustomerException {
 
     //Get access token from authorization header
-    String jwtToken = customerService.getBearerAccessToken(authorization);
+    String jwtToken = UtilityProvider.decodeBearerToken(authorization);
 
     if(updatePasswordRequest.getNewPassword()==null
         || updatePasswordRequest.getNewPassword().isEmpty()
