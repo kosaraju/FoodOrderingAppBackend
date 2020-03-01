@@ -33,18 +33,20 @@ public class CustomerService {
   public CustomerEntity saveCustomer(CustomerEntity customerEntity) throws SignUpRestrictedException {
 
     //Perform null check for mandatory fields
-    if (customerEntity == null || customerEntity.getFirstName() == null || customerEntity.getContactnumber()==null
+    if (customerEntity == null || customerEntity.getFirstName() == null
+        || customerEntity.getContactNumber() == null
         || customerEntity.getEmail() == null
         || customerEntity.getPassword() == null
         || customerEntity.getFirstName().isEmpty()
         || customerEntity.getEmail().isEmpty() || customerEntity.getPassword().isEmpty()
-        || customerEntity.getContactnumber().isEmpty()
+        || customerEntity.getContactNumber().isEmpty()
     ) {
       throw new SignUpRestrictedException("SGR-005", "Except last name all fields should be filled");
     }
 
     //If customer already exists with same contact number throw respective exceptions
-    CustomerEntity existingUser1 = customerDao.getCustomerByContactNumber(customerEntity.getContactnumber());
+    CustomerEntity existingUser1 = customerDao
+        .getCustomerByContactNumber(customerEntity.getContactNumber());
     if (existingUser1 != null) {
       throw new SignUpRestrictedException("SGR-001",
           "This contact number is already registered! Try other contact number.");
@@ -56,7 +58,7 @@ public class CustomerService {
     }
 
     // (SGR-003) and message (Invalid contact number!)
-    if(!isValidContactNumber(customerEntity.getContactnumber())){
+    if (!isValidContactNumber(customerEntity.getContactNumber())) {
       throw new SignUpRestrictedException("SGR-003", "Invalid contact number");
     }
 

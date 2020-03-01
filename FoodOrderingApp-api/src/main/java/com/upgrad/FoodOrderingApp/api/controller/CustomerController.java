@@ -54,14 +54,26 @@ public class CustomerController {
       throws SignUpRestrictedException {
 
     //Fetch details from signupCustomerRequest and set in CustomerEntity instance
-    if(signupCustomerRequest==null) throw new SignUpRestrictedException("SGR-005", "Except last name all fields should be filled");
+    //Perform null check for mandatory fields
+    if (signupCustomerRequest == null || signupCustomerRequest.getFirstName() == null
+        || signupCustomerRequest.getContactNumber() == null
+        || signupCustomerRequest.getEmailAddress() == null
+        || signupCustomerRequest.getPassword() == null
+        || signupCustomerRequest.getFirstName().isEmpty()
+        || signupCustomerRequest.getEmailAddress().isEmpty() || signupCustomerRequest.getPassword()
+        .isEmpty()
+        || signupCustomerRequest.getContactNumber().isEmpty()
+    ) {
+      throw new SignUpRestrictedException("SGR-005",
+          "Except last name all fields should be filled");
+    }
     final CustomerEntity customerEntity = new CustomerEntity();
     customerEntity.setUuid(UUID.randomUUID().toString());
     customerEntity.setFirstName(signupCustomerRequest.getFirstName());
     customerEntity.setLastName(signupCustomerRequest.getLastName());
     customerEntity.setEmail(signupCustomerRequest.getEmailAddress());
     customerEntity.setPassword(signupCustomerRequest.getPassword());
-    customerEntity.setContactnumber(signupCustomerRequest.getContactNumber());
+    customerEntity.setContactNumber(signupCustomerRequest.getContactNumber());
     customerEntity.setSalt("1234abc"); // will get overwritten in service class
 
     //Invoke business Service to signup & return SignupCustomerResponse
@@ -121,7 +133,7 @@ public class CustomerController {
     //Fill LoginResponse and return
     LoginResponse loginResponse = new LoginResponse().id(customer.getUuid())
         .firstName(customer.getFirstName()).lastName(customer.getLastName())
-        .contactNumber(customer.getContactnumber()).emailAddress(customer.getEmail())
+        .contactNumber(customer.getContactNumber()).emailAddress(customer.getEmail())
         .message("LOGGED IN SUCCESSFULLY");
     HttpHeaders headers = new HttpHeaders();
     headers.add("access-token", customerAuthEntity.getAccessToken());
@@ -149,16 +161,14 @@ public class CustomerController {
     String jwtToken = UtilityProvider.decodeBearerToken(authorization);
 
     //Invoke business service to logoff
-    CustomerAuthEntity userAuthEntity = customerService.logout(jwtToken);
+    CustomerAuthEntity customerAuthEntity = customerService.logout(jwtToken);
     //Get Customer details who had logged off
-    CustomerEntity customer = userAuthEntity.getCustomer();
+    CustomerEntity customer = customerAuthEntity.getCustomer();
 
     //Fill in Signout Response and return
     LogoutResponse logoutResponse = new LogoutResponse().id(customer.getUuid())
         .message("LOGGED OUT SUCCESSFULLY");
-    HttpHeaders headers = new HttpHeaders();
-    headers.add("access-token", userAuthEntity.getAccessToken());
-    return new ResponseEntity<LogoutResponse>(logoutResponse, headers, HttpStatus.OK);
+    return new ResponseEntity<LogoutResponse>(logoutResponse, HttpStatus.OK);
   }
 
   /**
@@ -174,12 +184,13 @@ public class CustomerController {
       @RequestHeader("authorization") final String authorization, @RequestBody final UpdateCustomerRequest updateCustomerRequest)
       throws AuthorizationFailedException, UpdateCustomerException {
 
+    if (updateCustomerRequest.getFirstName() == null || updateCustomerRequest.getFirstName().trim()
+        .isEmpty()) {
+      throw new UpdateCustomerException("UCR-002", "First name field should not be empty");
+    }
+
     //Get access token from authorization header
     String jwtToken = UtilityProvider.decodeBearerToken(authorization);
-
-    if(updateCustomerRequest.getFirstName()==null || updateCustomerRequest.getFirstName().trim().isEmpty()){
-        throw new UpdateCustomerException("UCR-002","First name field should not be empty");
-    }
 
     //Invoke business service to update
     CustomerEntity customer = customerService.getCustomer(jwtToken);
@@ -196,43 +207,42 @@ public class CustomerController {
     return new ResponseEntity<UpdateCustomerResponse>(updateCustomerResponse, headers, HttpStatus.OK);
   }
 
+
   /**
-   * Handler to Change customer password.
+   * Updates the Customer Password with the one provided by the customer after validating the Bearer authorization
+   * token with the Database records.
+   * Throw error message when the access token is invalid/expired/not present in Database
+   * Checks whether the old password matches with the one in Database before updating the new password
    *
-   * @param authorization access token
-   * @return
-   * @throws
+   * @param authorization         The Bearer authorization token from the headers
+   * @param updatePasswordRequest The request object which has the old and new passwords
+   * @return The uuid of the Customer after updating the password
+   * @throws UpdateCustomerException      If the passed old/new password fields are empty or null
+   * @throws AuthorizationFailedException If the token is invalid or expired or not present in Database
    */
   @RequestMapping(method = RequestMethod.PUT, path = "/customer/password",
-      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public ResponseEntity<UpdatePasswordResponse> changePassword(
-      @RequestHeader("authorization") final String authorization,@RequestBody final UpdatePasswordRequest updatePasswordRequest)
-      throws AuthorizationFailedException, UpdateCustomerException {
-
-    //Get access token from authorization header
-    String jwtToken = UtilityProvider.decodeBearerToken(authorization);
-
-    if(updatePasswordRequest.getNewPassword()==null
-        || updatePasswordRequest.getNewPassword().isEmpty()
-        || updatePasswordRequest.getOldPassword()==null
-        || updatePasswordRequest.getOldPassword().isEmpty()
-    ){
-      throw new UpdateCustomerException("UCR-003","No field should be empty");
+      consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public ResponseEntity<UpdatePasswordResponse> updateCustomerPassword(
+      @RequestHeader("authorization") final String authorization,
+      @RequestBody UpdatePasswordRequest updatePasswordRequest)
+      throws UpdateCustomerException, AuthorizationFailedException {
+    // Check for empty field validation
+    if (updatePasswordRequest.getOldPassword() == null || updatePasswordRequest.getOldPassword()
+        .isEmpty()
+        || updatePasswordRequest.getNewPassword() == null || updatePasswordRequest.getNewPassword()
+        .isEmpty()) {
+      throw new UpdateCustomerException("UCR-003", "No field should be empty");
     }
-
-    String oldPassword = updatePasswordRequest.getOldPassword();
-    String newPassword = updatePasswordRequest.getNewPassword();
-    //Call business service
-    CustomerAuthEntity customerAuthEntity = customerService.validateBearerAuthentication(jwtToken);
-    CustomerEntity customer = customerAuthEntity.getCustomer();
-    customer = customerService.updateCustomerPassword(oldPassword, newPassword, customer);
-
-    //Fill in Update Customer Response and return
-    UpdatePasswordResponse updatePasswordResponse = new UpdatePasswordResponse()
-        .id(customer.getUuid()).status("CUSTOMER PASSWORD UPDATED SUCCESSFULLY");
-    HttpHeaders headers = new HttpHeaders();
-    headers.add("access-token", jwtToken);
-    return new ResponseEntity<UpdatePasswordResponse>(updatePasswordResponse, headers, HttpStatus.OK);
+    CustomerEntity customerToUpdate = customerService
+        .getCustomer(UtilityProvider.decodeBearerToken(authorization));
+    CustomerEntity updatedCustomer = customerService
+        .updateCustomerPassword(updatePasswordRequest.getOldPassword(),
+            updatePasswordRequest.getNewPassword(), customerToUpdate);
+    UpdatePasswordResponse response = new UpdatePasswordResponse();
+    response.id(updatedCustomer.getUuid()).status("CUSTOMER PASSWORD UPDATED SUCCESSFULLY");
+    return new ResponseEntity<UpdatePasswordResponse>(response, HttpStatus.OK);
   }
+
 }
 
