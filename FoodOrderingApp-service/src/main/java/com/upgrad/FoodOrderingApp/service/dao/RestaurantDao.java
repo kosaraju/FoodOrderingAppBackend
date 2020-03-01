@@ -64,4 +64,14 @@ public class RestaurantDao {
             return null;
         }
     }
+
+    public RestaurantEntity updateRestaurant(final RestaurantEntity updateRestaurantEntity) {
+        try {
+            entityManager.merge(updateRestaurantEntity);
+        } catch (Exception e) {
+            System.out.println(".....................Database Error");
+            e.printStackTrace();
+        }
+        return updateRestaurantEntity;
+    }
 }
