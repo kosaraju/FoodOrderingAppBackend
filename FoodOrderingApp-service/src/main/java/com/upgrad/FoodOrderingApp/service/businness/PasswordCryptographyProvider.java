@@ -1,16 +1,15 @@
 package com.upgrad.FoodOrderingApp.service.businness;
 
 
-import org.springframework.stereotype.Component;
-
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Base64;
 import java.util.Random;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+import org.springframework.stereotype.Component;
 
 
 @Component
@@ -86,7 +85,7 @@ public class PasswordCryptographyProvider {
         return new String(hexChars);
     }
 
-    private static String getBase64EncodedBytesAsString(byte bytes[]) {
+  private static String getBase64EncodedBytesAsString(byte[] bytes) {
         return Base64.getEncoder().encodeToString(bytes);
     }
 

@@ -1,32 +1,36 @@
-/*
-package com.upgrad.FoodOrderingApp.api.controller;
+ package com.upgrad.FoodOrderingApp.api.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.upgrad.FoodOrderingApp.api.model.CategoriesListResponse;
-import com.upgrad.FoodOrderingApp.api.model.CategoryDetailsResponse;
-import com.upgrad.FoodOrderingApp.service.businness.CategoryService;
-import com.upgrad.FoodOrderingApp.service.entity.CategoryEntity;
-import com.upgrad.FoodOrderingApp.service.entity.ItemEntity;
-import com.upgrad.FoodOrderingApp.service.exception.CategoryNotFoundException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
+ import static org.junit.Assert.assertEquals;
+ import static org.junit.Assert.assertNull;
+ import static org.mockito.Mockito.anyString;
+ import static org.mockito.Mockito.times;
+ import static org.mockito.Mockito.verify;
+ import static org.mockito.Mockito.when;
+ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.Collections;
-import java.util.UUID;
+ import com.fasterxml.jackson.databind.ObjectMapper;
+ import com.upgrad.FoodOrderingApp.api.model.CategoriesListResponse;
+ import com.upgrad.FoodOrderingApp.api.model.CategoryDetailsResponse;
+ import com.upgrad.FoodOrderingApp.service.businness.CategoryService;
+ import com.upgrad.FoodOrderingApp.service.entity.CategoryEntity;
+ import com.upgrad.FoodOrderingApp.service.entity.ItemEntity;
+ import com.upgrad.FoodOrderingApp.service.exception.CategoryNotFoundException;
+ import com.upgrad.FoodOrderingApp.service.type.ItemType;
+ import java.util.Collections;
+ import java.util.UUID;
+ import org.junit.Test;
+ import org.junit.runner.RunWith;
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+ import org.springframework.boot.test.context.SpringBootTest;
+ import org.springframework.boot.test.mock.mockito.MockBean;
+ import org.springframework.http.MediaType;
+ import org.springframework.test.context.junit4.SpringRunner;
+ import org.springframework.test.web.servlet.MockMvc;
 
-import static com.upgrad.FoodOrderingApp.service.common.ItemType.NON_VEG;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+//import static com.upgrad.FoodOrderingApp.service.common.ItemType;
 
 // This class contains all the test cases regarding the category controller
 @RunWith(SpringRunner.class)
@@ -40,13 +44,13 @@ public class CategoryControllerTest {
     @MockBean
     private CategoryService mockCategoryService;
 
-    //This test case passes when you have are able to fetch any category by its id.
+   //This test case passes when you have are able to fetch any category by its id.
     @Test
     public void shouldGetCategoryById() throws Exception {
         final ItemEntity itemEntity = new ItemEntity();
         itemEntity.setItemName("myItem");
         itemEntity.setPrice(200);
-        itemEntity.setType(NON_VEG);
+        itemEntity.setType(ItemType.NON_VEG);
         final String itemId = UUID.randomUUID().toString();
         itemEntity.setUuid(itemId);
 
@@ -139,4 +143,4 @@ public class CategoryControllerTest {
     }
 
 
-}*/
+}

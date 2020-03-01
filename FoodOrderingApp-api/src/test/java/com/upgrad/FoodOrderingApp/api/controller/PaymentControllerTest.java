@@ -1,10 +1,18 @@
-/*
 package com.upgrad.FoodOrderingApp.api.controller;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.upgrad.FoodOrderingApp.api.model.PaymentListResponse;
 import com.upgrad.FoodOrderingApp.service.businness.PaymentService;
 import com.upgrad.FoodOrderingApp.service.entity.PaymentEntity;
+import java.util.Collections;
+import java.util.UUID;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,13 +22,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.Collections;
-import java.util.UUID;
-
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 // This class contains all the test cases regarding the payment controller
 @RunWith(SpringRunner.class)
@@ -57,4 +58,4 @@ public class PaymentControllerTest {
         verify(mockPaymentService, times(1)).getAllPaymentMethods();
     }
 
-}*/
+}
