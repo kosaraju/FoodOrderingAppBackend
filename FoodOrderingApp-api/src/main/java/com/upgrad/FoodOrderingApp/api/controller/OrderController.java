@@ -12,12 +12,12 @@ import com.upgrad.FoodOrderingApp.api.model.OrderListCustomer;
 import com.upgrad.FoodOrderingApp.api.model.OrderListPayment;
 import com.upgrad.FoodOrderingApp.api.model.SaveOrderRequest;
 import com.upgrad.FoodOrderingApp.api.model.SaveOrderResponse;
-import com.upgrad.FoodOrderingApp.service.business.AddressService;
-import com.upgrad.FoodOrderingApp.service.business.CustomerService;
-import com.upgrad.FoodOrderingApp.service.business.ItemService;
-import com.upgrad.FoodOrderingApp.service.business.OrderService;
-import com.upgrad.FoodOrderingApp.service.business.PaymentService;
-import com.upgrad.FoodOrderingApp.service.business.RestaurantService;
+import com.upgrad.FoodOrderingApp.service.businness.AddressService;
+import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
+import com.upgrad.FoodOrderingApp.service.businness.ItemService;
+import com.upgrad.FoodOrderingApp.service.businness.OrderService;
+import com.upgrad.FoodOrderingApp.service.businness.PaymentService;
+import com.upgrad.FoodOrderingApp.service.businness.RestaurantService;
 import com.upgrad.FoodOrderingApp.service.entity.AddressEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CouponEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
@@ -33,6 +33,7 @@ import com.upgrad.FoodOrderingApp.service.exception.CouponNotFoundException;
 import com.upgrad.FoodOrderingApp.service.exception.ItemNotFoundException;
 import com.upgrad.FoodOrderingApp.service.exception.PaymentMethodNotFoundException;
 import com.upgrad.FoodOrderingApp.service.exception.RestaurantNotFoundException;
+import com.upgrad.FoodOrderingApp.service.util.UtilityProvider;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -92,7 +93,7 @@ public class OrderController {
       @PathVariable(name = "coupon_name", required = false) String couponName)
       throws AuthorizationFailedException, CouponNotFoundException {
     // Validate customer session
-    customerService.getCustomer(customerService.getBearerAccessToken(authorization));
+    customerService.getCustomer(UtilityProvider.decodeBearerToken(authorization));
     CouponEntity coupon = orderService.getCouponByCouponName(couponName);
     OrderListCoupon orderListCoupon = new OrderListCoupon();
     orderListCoupon.id(UUID.fromString(coupon.getUuid())).couponName(coupon.getCouponName())
@@ -134,7 +135,7 @@ public class OrderController {
 
     // Validate customer session
     CustomerEntity loggedInCustomer = customerService
-        .getCustomer(customerService.getBearerAccessToken(authorization));
+        .getCustomer(UtilityProvider.decodeBearerToken(authorization));
     // Check if the coupon is valid or not, in case it is passed
     CouponEntity coupon = null;
     PaymentEntity payment = null;
@@ -211,7 +212,7 @@ public class OrderController {
       throws AuthorizationFailedException {
     // Validate customer session
     CustomerEntity customer = customerService
-        .getCustomer(customerService.getBearerAccessToken(authorization));
+        .getCustomer(UtilityProvider.decodeBearerToken(authorization));
 
     // Get all the past orders by customer uuid
     List<OrderEntity> pastOrders = orderService.getOrdersByCustomers(customer.getUuid());

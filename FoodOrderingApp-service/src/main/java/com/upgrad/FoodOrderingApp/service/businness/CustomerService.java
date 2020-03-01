@@ -1,4 +1,4 @@
-package com.upgrad.FoodOrderingApp.service.business;
+package com.upgrad.FoodOrderingApp.service.businness;
 
 import com.upgrad.FoodOrderingApp.service.dao.CustomerDao;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
@@ -181,25 +181,28 @@ public class CustomerService {
     return customerAuthEntity;
   }
 
-  /** Service to split authorization header to get Beare access token.
-   * @param authorization authorization
-   * @return beare access token
-   * @throws AuthorizationFailedException authorizationFailedException
-   */
-  public String getBearerAccessToken(final String authorization)
-      throws AuthorizationFailedException {
-    try {
-      String[] bearerToken = authorization.split("Bearer ");
-      if (bearerToken != null && bearerToken.length > 1) {
-        String accessToken = bearerToken[1];
-        return accessToken;
-      } else {
-        throw new AuthorizationFailedException("ATHR-001", "Customer is not Logged in.");
-      }
-    } catch (ArrayIndexOutOfBoundsException e) {
-      throw new AuthorizationFailedException("ATHR-001", "Customer is not Logged in.");
-    }
-  }
+//  /** Service to split authorization header to get Beare access token.
+//   * @param authorization authorization
+//   * @return beare access token
+//   * @throws AuthorizationFailedException authorizationFailedException
+//   */
+//  public String getBearerAccessToken( String authorization)
+//      throws AuthorizationFailedException {
+//    String[] tokens = authorization.split("Bearer ");
+//    String accessToken = null;
+//    try {
+//      //If the request adheres to 'Bearer accessToken', above split would put token in index 1
+//      accessToken = tokens[1];
+//    } catch (IndexOutOfBoundsException ie) {
+//      //If the request doesn't adheres to 'Bearer accessToken', try to read token in index 0
+//      accessToken = tokens[0];
+//      //for scenarios where those users don't adhere to adding prefix of Bearer like test cases
+//      if (accessToken == null) {
+//        throw new AuthorizationFailedException("ATH-005", "Use format: 'Bearer accessToken'");
+//      }
+//    }
+//    return accessToken;
+//  }
 
   /**Update Customer.
    * @param

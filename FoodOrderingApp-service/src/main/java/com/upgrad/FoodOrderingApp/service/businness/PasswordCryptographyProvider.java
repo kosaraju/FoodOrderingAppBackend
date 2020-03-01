@@ -1,4 +1,4 @@
-package com.upgrad.FoodOrderingApp.service.business;
+package com.upgrad.FoodOrderingApp.service.businness;
 
 
 import java.security.NoSuchAlgorithmException;

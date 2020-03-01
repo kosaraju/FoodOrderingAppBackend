@@ -9,7 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.upgrad.FoodOrderingApp.api.model.PaymentListResponse;
-import com.upgrad.FoodOrderingApp.service.business.PaymentService;
+import com.upgrad.FoodOrderingApp.service.businness.PaymentService;
 import com.upgrad.FoodOrderingApp.service.entity.PaymentEntity;
 import java.util.Collections;
 import java.util.UUID;
