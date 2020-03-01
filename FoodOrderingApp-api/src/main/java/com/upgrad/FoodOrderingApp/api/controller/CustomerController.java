@@ -184,12 +184,13 @@ public class CustomerController {
       @RequestHeader("authorization") final String authorization, @RequestBody final UpdateCustomerRequest updateCustomerRequest)
       throws AuthorizationFailedException, UpdateCustomerException {
 
+    if (updateCustomerRequest.getFirstName() == null || updateCustomerRequest.getFirstName().trim()
+        .isEmpty()) {
+      throw new UpdateCustomerException("UCR-002", "First name field should not be empty");
+    }
+
     //Get access token from authorization header
     String jwtToken = UtilityProvider.decodeBearerToken(authorization);
-
-    if(updateCustomerRequest.getFirstName()==null || updateCustomerRequest.getFirstName().trim().isEmpty()){
-        throw new UpdateCustomerException("UCR-002","First name field should not be empty");
-    }
 
     //Invoke business service to update
     CustomerEntity customer = customerService.getCustomer(jwtToken);
