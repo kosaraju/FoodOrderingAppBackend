@@ -90,4 +90,22 @@ public class RestaurantController {
                         .id(UUID.fromString(restaurantEntity.getAddress().getState().getStateUuid()))
                         .stateName(restaurantEntity.getAddress().getState().getStateName()));
     }
+
+    @RequestMapping(
+            method = RequestMethod.GET,
+            path = "/restaurant/category/{category_id}",
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<RestaurantListResponse> getRestaurantListByCategory(
+            @PathVariable("category_id") final String categoryId)
+            throws CategoryNotFoundException {
+
+        List<RestaurantEntity> listRestaurantEntity = restaurantService.restaurantByCategory(categoryId);
+
+        List<RestaurantList> listRestaurantList = getListRestaurantListFromListRestaurantEntity(listRestaurantEntity);
+
+        RestaurantListResponse restaurantListResponse = new RestaurantListResponse().restaurants(listRestaurantList);
+
+        return new ResponseEntity<>(restaurantListResponse, HttpStatus.OK);
+    }
+
 }
