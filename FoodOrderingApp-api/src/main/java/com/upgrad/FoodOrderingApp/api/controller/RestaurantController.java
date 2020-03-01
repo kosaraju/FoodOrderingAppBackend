@@ -126,4 +126,61 @@ public class RestaurantController {
         return new ResponseEntity<RestaurantListResponse>(restaurantListResponse, HttpStatus.OK);
     }
 
+
+    @RequestMapping(
+            method = RequestMethod.GET,
+            path = "/restaurant/{restaurant_id}",
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<RestaurantDetailsResponse> getRestaurantDetails(
+            @PathVariable("restaurant_id") final String restaurantId)
+            throws RestaurantNotFoundException {
+        if (restaurantId == null || restaurantId.isEmpty()) {
+            throw new RestaurantNotFoundException("RNF-001", "Restaurant id field should not be empty");
+        }
+
+        RestaurantEntity restaurantEntity = restaurantService.restaurantByUUID(restaurantId);
+
+        List<CategoryList> listCategoryList = getCategoryListByRestaurantId(restaurantId);
+
+        RestaurantDetailsResponse restaurantDetailsResponse = getRestaurantDetailsResponse(restaurantEntity, listCategoryList);
+
+        return new ResponseEntity<RestaurantDetailsResponse>(restaurantDetailsResponse, HttpStatus.OK);
+    }
+
+    private List<CategoryList> getCategoryListByRestaurantId(String restaurantId) {
+        List<CategoryEntity> listCategory = categoryService.getCategoriesByRestaurant(restaurantId);
+        List<CategoryList> listCategoryList = new ArrayList<>();
+        for (CategoryEntity c : listCategory) {
+
+            List<ItemEntity> listItemEntity = itemService.getItemsByCategoryAndRestaurant(restaurantId, c.getUuid());
+            List<ItemList> listItemList = new ArrayList<>();
+            for (ItemEntity i : listItemEntity) {
+                listItemList.add(new ItemList()
+                        .id(UUID.fromString(i.getUuid()))
+                        .itemName(i.getItemName())
+                        .itemType(ItemList.ItemTypeEnum.fromValue(i.getType().toString()))
+                        .price(i.getPrice()));
+            }
+            listCategoryList.add(new CategoryList()
+                    .id(UUID.fromString(c.getUuid()))
+                    .categoryName(c.getCategoryName())
+                    .itemList(listItemList));
+        }
+        return listCategoryList;
+    }
+
+    private RestaurantDetailsResponse getRestaurantDetailsResponse(RestaurantEntity restaurantEntity, List<CategoryList> listCategoryList) {
+
+        return new RestaurantDetailsResponse().id(UUID.fromString(restaurantEntity.getUuid()))
+                .restaurantName(restaurantEntity.getRestaurantName())
+                .averagePrice(restaurantEntity.getAvgPrice())
+                .categories(listCategoryList)
+                .address(getRestaurantDetailsResponseAddress(restaurantEntity))
+                .customerRating(BigDecimal.valueOf(restaurantEntity.getCustomerRating()))
+                .numberCustomersRated(restaurantEntity.getNumberCustomersRated())
+                .photoURL(restaurantEntity.getPhotoUrl())
+                .address(getRestaurantDetailsResponseAddress(restaurantEntity))
+                .averagePrice(restaurantEntity.getAvgPrice());
+    }
+
 }
