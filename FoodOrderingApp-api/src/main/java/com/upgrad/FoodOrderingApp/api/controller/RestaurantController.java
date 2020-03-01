@@ -1,10 +1,10 @@
 package com.upgrad.FoodOrderingApp.api.controller;
 
 import com.upgrad.FoodOrderingApp.api.model.*;
-import com.upgrad.FoodOrderingApp.service.business.CategoryService;
-import com.upgrad.FoodOrderingApp.service.business.CustomerService;
-import com.upgrad.FoodOrderingApp.service.business.ItemService;
-import com.upgrad.FoodOrderingApp.service.business.RestaurantService;
+import com.upgrad.FoodOrderingApp.service.businness.CategoryService;
+import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
+import com.upgrad.FoodOrderingApp.service.businness.ItemService;
+import com.upgrad.FoodOrderingApp.service.businness.RestaurantService;
 import com.upgrad.FoodOrderingApp.service.entity.CategoryEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.entity.ItemEntity;
@@ -13,6 +13,7 @@ import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException
 import com.upgrad.FoodOrderingApp.service.exception.CategoryNotFoundException;
 import com.upgrad.FoodOrderingApp.service.exception.InvalidRatingException;
 import com.upgrad.FoodOrderingApp.service.exception.RestaurantNotFoundException;
+import com.upgrad.FoodOrderingApp.service.util.UtilityProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -195,7 +196,8 @@ public class RestaurantController {
             throws AuthorizationFailedException, RestaurantNotFoundException, InvalidRatingException {
 
         // Call authenticationService with access token came in authorization field.
-        CustomerEntity customerEntity = customerService.getCustomer(customerService.getBearerAccessToken(authorization));
+        String jwtToken = UtilityProvider.decodeBearerToken(authorization);
+        CustomerEntity customerEntity = customerService.getCustomer(jwtToken);
 
         if (restaurantId == null || restaurantId.isEmpty()) {
             throw new RestaurantNotFoundException("RNF-002", "Restaurant id field should not be empty");
