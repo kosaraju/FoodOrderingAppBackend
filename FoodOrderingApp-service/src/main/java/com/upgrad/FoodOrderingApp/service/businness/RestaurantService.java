@@ -7,7 +7,8 @@ import com.upgrad.FoodOrderingApp.service.exception.RestaurantNotFoundException;
 import com.upgrad.FoodOrderingApp.service.util.UtilityProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import java.util.ArrayList;
+import java.util.List;
 //This Class handles all service related to the Restaurant.
 
 @Service
@@ -42,6 +43,10 @@ public class RestaurantService {
         return restaurantEntity;
 
 
+    }
+
+    public List<RestaurantEntity> restaurantsByRating() {
+        return restaurantDao.restaurantsByRating();
     }
 
 
