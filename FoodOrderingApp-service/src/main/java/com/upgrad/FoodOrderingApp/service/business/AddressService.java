@@ -50,7 +50,10 @@ public class AddressService {
     public AddressEntity saveAddress(AddressEntity addressEntity,StateEntity stateEntity)throws SaveAddressException{
 
         //Checking if any field is empty in the address entity.
-        if (addressEntity.getCity() == null || addressEntity.getFlatBuilNo() == null || addressEntity.getPincode() == null || addressEntity.getLocality() == null){
+      if (addressEntity.getCity() == null || addressEntity.getCity().trim().isEmpty()
+          || addressEntity.getFlatBuilNo() == null || addressEntity.getFlatBuilNo().trim().isEmpty()
+          || addressEntity.getPincode() == null || addressEntity.getPincode().trim().isEmpty()
+          || addressEntity.getLocality() == null || addressEntity.getLocality().trim().isEmpty()) {
             throw new SaveAddressException("SAR-001","No field can be empty");
         }
         //Checking if pincode is valid

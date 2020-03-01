@@ -56,7 +56,7 @@ public class AddressController {
     public ResponseEntity<SaveAddressResponse> saveAddress(@RequestHeader("authorization") final String authorization, @RequestBody(required = false)SaveAddressRequest saveAddressRequest)throws AuthorizationFailedException, AddressNotFoundException, SaveAddressException {
 
         //Access the accessToken from the request Header
-        String accessToken = authorization.split("Bearer ")[1];
+      String accessToken = customerService.getBearerAccessToken(authorization);
 
         //Calls customerService getCustomer Method to check the validity of the customer.this methods returns the customerEntity  to be updated  with address.
         CustomerEntity customerEntity = customerService.getCustomer(accessToken);
@@ -95,7 +95,7 @@ public class AddressController {
     public ResponseEntity<AddressListResponse> getAllSavedAddress(@RequestHeader("authorization")final String authorization)throws AuthorizationFailedException{
 
         //Access the accessToken from the request Header
-        String accessToken = authorization.split("Bearer ")[1];
+      String accessToken = customerService.getBearerAccessToken(authorization);
 
         //Calls customerService getCustomer Method to check the validity of the customer.this methods returns the customerEntity  to be get all address.
         CustomerEntity customerEntity = customerService.getCustomer(accessToken);
@@ -131,10 +131,13 @@ public class AddressController {
    */
   @CrossOrigin
     @RequestMapping(method = RequestMethod.DELETE,path = "/address/{address_id}",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<DeleteAddressResponse> deleteSavedAddress(@RequestHeader ("authorization") final String authorization,@PathVariable(value = "address_id")final String addressUuid)throws AuthorizationFailedException,AddressNotFoundException{
+  public ResponseEntity<DeleteAddressResponse> deleteSavedAddress(
+      @RequestHeader("authorization") final String authorization,
+      @PathVariable(value = "address_id") final String addressUuid)
+      throws AuthorizationFailedException, AddressNotFoundException {
 
         //Access the accessToken from the request Header
-        String accessToken = authorization.split("Bearer ")[1];
+    String accessToken = customerService.getBearerAccessToken(authorization);
 
         //Calls customerService getCustomer Method to check the validity of the customer.this methods returns the customerEntity of whose address be deleted.
         CustomerEntity customerEntity = customerService.getCustomer(accessToken);
@@ -159,7 +162,6 @@ public class AddressController {
      */
     @CrossOrigin
     @RequestMapping(method = RequestMethod.GET,path = "/states",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-
     public ResponseEntity<StatesListResponse> getAllStates(){
 
         //Calls getAllStates method in addressService and returns list of stateEntity.
