@@ -1,12 +1,43 @@
-/*package com.upgrad.FoodOrderingApp.api.controller;
+package com.upgrad.FoodOrderingApp.api.controller;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.upgrad.FoodOrderingApp.api.model.CustomerOrderResponse;
 import com.upgrad.FoodOrderingApp.api.model.ItemQuantity;
 import com.upgrad.FoodOrderingApp.api.model.SaveOrderRequest;
-import com.upgrad.FoodOrderingApp.service.businness.*;
-import com.upgrad.FoodOrderingApp.service.entity.*;
-import com.upgrad.FoodOrderingApp.service.exception.*;
+import com.upgrad.FoodOrderingApp.service.business.AddressService;
+import com.upgrad.FoodOrderingApp.service.business.CustomerService;
+import com.upgrad.FoodOrderingApp.service.business.ItemService;
+import com.upgrad.FoodOrderingApp.service.business.OrderService;
+import com.upgrad.FoodOrderingApp.service.business.PaymentService;
+import com.upgrad.FoodOrderingApp.service.business.RestaurantService;
+import com.upgrad.FoodOrderingApp.service.entity.AddressEntity;
+import com.upgrad.FoodOrderingApp.service.entity.CouponEntity;
+import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
+import com.upgrad.FoodOrderingApp.service.entity.OrderEntity;
+import com.upgrad.FoodOrderingApp.service.entity.OrderItemEntity;
+import com.upgrad.FoodOrderingApp.service.entity.PaymentEntity;
+import com.upgrad.FoodOrderingApp.service.entity.RestaurantEntity;
+import com.upgrad.FoodOrderingApp.service.entity.StateEntity;
+import com.upgrad.FoodOrderingApp.service.exception.AddressNotFoundException;
+import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
+import com.upgrad.FoodOrderingApp.service.exception.CouponNotFoundException;
+import com.upgrad.FoodOrderingApp.service.exception.PaymentMethodNotFoundException;
+import com.upgrad.FoodOrderingApp.service.exception.RestaurantNotFoundException;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.Collections;
+import java.util.UUID;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,21 +47,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.math.BigDecimal;
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.UUID;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 // This class contains all the test cases regarding the order controller
 @RunWith(SpringRunner.class)
@@ -79,7 +95,7 @@ public class OrderControllerTest {
         when(mockOrderService.getCouponByCouponId(saveOrderRequest.getCouponId().toString()))
                 .thenReturn(new CouponEntity());
 
-        final OrdersEntity orderEntity = new OrdersEntity();
+        final OrderEntity orderEntity = new OrderEntity();
         final String orderId = UUID.randomUUID().toString();
         orderEntity.setUuid(orderId);
         when(mockOrderService.saveOrder(any())).thenReturn(orderEntity);
@@ -363,7 +379,7 @@ public class OrderControllerTest {
         when(mockCustomerService.getCustomer("database_accesstoken2"))
                 .thenReturn(customerEntity);
 
-        final OrdersEntity orderEntity = getOrderEntity(customerEntity);
+        final OrderEntity orderEntity = getOrderEntity(customerEntity);
         when(mockOrderService.getOrdersByCustomers(customerId))
                 .thenReturn(Collections.singletonList(orderEntity));
 
@@ -580,7 +596,7 @@ public class OrderControllerTest {
         return request;
     }
 
-    private OrdersEntity getOrderEntity(final CustomerEntity customerEntity) {
+    private OrderEntity getOrderEntity(final CustomerEntity customerEntity) {
         final String stateId = UUID.randomUUID().toString();
         final StateEntity stateEntity = new StateEntity(stateId, "someState");
 
@@ -607,9 +623,9 @@ public class OrderControllerTest {
 
         final String orderId = UUID.randomUUID().toString();
         final Timestamp orderDate = new Timestamp(System.currentTimeMillis());
-        return new OrdersEntity(orderId, 200.50, couponEntity, 10.0,
+        return new OrderEntity(orderId, 200.50, couponEntity, 10.0,
                 orderDate, paymentEntity, customerEntity, addressEntity, restaurantEntity);
     }
 
 
-}*/
+}

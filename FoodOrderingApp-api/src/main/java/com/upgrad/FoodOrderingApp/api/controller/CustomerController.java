@@ -8,7 +8,7 @@ import com.upgrad.FoodOrderingApp.api.model.UpdateCustomerRequest;
 import com.upgrad.FoodOrderingApp.api.model.UpdateCustomerResponse;
 import com.upgrad.FoodOrderingApp.api.model.UpdatePasswordRequest;
 import com.upgrad.FoodOrderingApp.api.model.UpdatePasswordResponse;
-import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
+import com.upgrad.FoodOrderingApp.service.business.CustomerService;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AuthenticationFailedException;
@@ -18,7 +18,7 @@ import com.upgrad.FoodOrderingApp.service.exception.UpdateCustomerException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
-import javax.print.attribute.standard.Media;
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,8 +30,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.UUID;
 
 @RestController
 @CrossOrigin

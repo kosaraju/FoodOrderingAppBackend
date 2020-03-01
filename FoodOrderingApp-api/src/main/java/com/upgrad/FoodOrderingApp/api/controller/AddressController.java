@@ -1,9 +1,16 @@
 package com.upgrad.FoodOrderingApp.api.controller;
 
 
-import com.upgrad.FoodOrderingApp.api.model.*;
-import com.upgrad.FoodOrderingApp.service.businness.AddressService;
-import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
+import com.upgrad.FoodOrderingApp.api.model.AddressList;
+import com.upgrad.FoodOrderingApp.api.model.AddressListResponse;
+import com.upgrad.FoodOrderingApp.api.model.AddressListState;
+import com.upgrad.FoodOrderingApp.api.model.DeleteAddressResponse;
+import com.upgrad.FoodOrderingApp.api.model.SaveAddressRequest;
+import com.upgrad.FoodOrderingApp.api.model.SaveAddressResponse;
+import com.upgrad.FoodOrderingApp.api.model.StatesList;
+import com.upgrad.FoodOrderingApp.api.model.StatesListResponse;
+import com.upgrad.FoodOrderingApp.service.business.AddressService;
+import com.upgrad.FoodOrderingApp.service.business.CustomerService;
 import com.upgrad.FoodOrderingApp.service.entity.AddressEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerAddressEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
@@ -11,16 +18,21 @@ import com.upgrad.FoodOrderingApp.service.entity.StateEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AddressNotFoundException;
 import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.SaveAddressException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 // Address Controller Handles all  the Address related endpoints
 
@@ -117,7 +129,7 @@ public class AddressController {
     /*  The method handles delete  Address  request.It takes the authorization and path variables address UUID
   & produces response in DeleteAddressResponse and returns UUID of deleted address and Successfull message .If error Return error code and error Message.
    */
-    /*@CrossOrigin
+  @CrossOrigin
     @RequestMapping(method = RequestMethod.DELETE,path = "/address/{address_id}",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<DeleteAddressResponse> deleteSavedAddress(@RequestHeader ("authorization") final String authorization,@PathVariable(value = "address_id")final String addressUuid)throws AuthorizationFailedException,AddressNotFoundException{
 
@@ -142,7 +154,7 @@ public class AddressController {
 
 
     }
-*/
+
     /*  The method handles States request.It produces response in StatesListResponse and returns UUID & stateName .If error Return error code and error Message.
      */
     @CrossOrigin
