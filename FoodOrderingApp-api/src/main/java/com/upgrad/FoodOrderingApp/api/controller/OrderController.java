@@ -247,7 +247,7 @@ public class OrderController {
         orderListCustomer.id(UUID.fromString(orderCustomer.getUuid()))
             .firstName(orderCustomer.getFirstName())
             .lastName(orderCustomer.getLastName()).emailAddress(orderCustomer.getEmail())
-            .contactNumber(orderCustomer.getContactnumber());
+            .contactNumber(orderCustomer.getContactNumber());
 
         orderList.payment(payment).customer(orderListCustomer);
 
