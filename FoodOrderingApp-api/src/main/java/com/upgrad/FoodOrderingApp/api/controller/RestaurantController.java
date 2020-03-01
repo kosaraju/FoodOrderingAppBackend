@@ -108,4 +108,22 @@ public class RestaurantController {
         return new ResponseEntity<>(restaurantListResponse, HttpStatus.OK);
     }
 
+    @RequestMapping(
+            method = RequestMethod.GET,
+            path = "/restaurant/name/{restaurant_name}",
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<RestaurantListResponse> getRestaurantListByName(
+            @PathVariable("restaurant_name") final String restaurantName)
+            throws RestaurantNotFoundException {
+
+        List<RestaurantEntity> listRestaurantEntity = restaurantService.restaurantsByName(restaurantName);
+
+        List<RestaurantList> listRestaurantList = getListRestaurantListFromListRestaurantEntity(listRestaurantEntity);
+
+        //create response with create customer uuid
+        RestaurantListResponse restaurantListResponse = new RestaurantListResponse().restaurants(listRestaurantList);
+
+        return new ResponseEntity<RestaurantListResponse>(restaurantListResponse, HttpStatus.OK);
+    }
+
 }

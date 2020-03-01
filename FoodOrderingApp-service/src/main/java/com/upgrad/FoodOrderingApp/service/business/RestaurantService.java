@@ -64,5 +64,13 @@ public class RestaurantService {
         return listRestaurantEntity;
     }
 
+    public List<RestaurantEntity> restaurantsByName(String restaurantName) throws RestaurantNotFoundException {
+        if (restaurantName == null || restaurantName.isEmpty()) {
+            throw new RestaurantNotFoundException("RNF-003", "Restaurant name field should not be empty");
+        }
+        List<RestaurantEntity> listRestaurantEntity = restaurantDao.restaurantsByName(restaurantName.toLowerCase());
+        return listRestaurantEntity;
+    }
+
 
 }
